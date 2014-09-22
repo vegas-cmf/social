@@ -20,16 +20,44 @@ class PublishTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(true, $facebook->setDefaultMessage());
 
-        $post_id = $facebook->publishOnWall();
-        $this->assertEquals(true, $post_id!=false);
-        $this->assertEquals(true, $facebook->deletePost($post_id));
-
-        $this->assertEquals(true, $facebook->setPostParamsArray(array('link'=>'http://google.com', 'message'=>'test')) );
+        //SETTING POST PARAMS
+        $this->assertEquals($facebook, $facebook->setPostParamsArray(array('link'=>'http://amsterdamstandard.com', 'message'=>'test', 'caption'=>'test caption')) );
         $this->assertEquals(false, $facebook->setPostParamsArray(array('link'=>'not_a_link', 'message'=>'test')) );
 
+        //GETTING POST PARAMS
+        $post_params = $facebook->getPostParamsArray();
+        $this->assertEquals( true, is_array($post_params) );
 
-        $this->assertEquals( "Vegas Cms", $facebook->getUserData('1485092648429699')->getName() );
-        //TO DO: add option to set images in post
+        //GETTING USER DATA
+        $graph_object = $facebook->getUserData('1485092648429699');
+        $this->assertEquals( "Vegas Cms", $graph_object->getName() );
 
+        //PUBLISHING ON WALL
+        $post_id = $facebook->publishOnWall();
+        //test post ID
+        $this->assertEquals(true, gettype($post_id)=='string');
+
+        //DELETING POST
+        $this->assertEquals(true, $facebook->deletePost($post_id));
+
+        //PUBLISHING ON WALL with setting post params
+        $facebook->setTargetUser('1485092648429699');
+        $post_id = $facebook->publishOnWall($post_params);
+
+        //DELETING POST
+        $this->assertEquals(true, $facebook->deletePost($post_id));
+
+        //PUBLISHING ON WALL with setting post params and target user
+        $post_id = $facebook->publishOnWall($post_params,'1485092648429699');
+
+        //DELETING POST
+        $this->assertEquals(true, $facebook->deletePost($post_id));
+
+        //ADDING PICTURE WITH COMMENT TO PICTURES
+        $curl_file = curl_file_create('test_picture.png','image/png','test_name');
+        $post_id = $facebook->publishInPhotos($curl_file, 'Test picture');
+
+        //DELETING PICTURE POST
+        $this->assertEquals(true, $facebook->deletePost($post_id));
     }
 }
