@@ -19,26 +19,26 @@ class PublishTest extends \PHPUnit_Framework_TestCase
     public function testSelfProfile()
     {
 
-        $facebook = new Publish($this->access_token1,$this->appId,$this->appSecret);
+        $facebook = new Publish($this->access_token1, $this->appId, $this->appSecret);
 
         $this->assertEquals(true, $facebook->setDefaultMessage());
 
         //SETTING POST PARAMS
-        $this->assertEquals($facebook, $facebook->setPostParamsArray(array('link'=>'http://amsterdamstandard.com', 'message'=>'test', 'caption'=>'test caption')) );
-        $this->assertEquals(false, $facebook->setPostParamsArray(array('link'=>'not_a_link', 'message'=>'test')) );
+        $this->assertEquals($facebook, $facebook->setPostParamsArray(array('link' => 'http://amsterdamstandard.com', 'message' => 'test', 'caption' => 'test caption')));
+        $this->assertEquals(false, $facebook->setPostParamsArray(array('link' => 'not_a_link', 'message' => 'test')));
 
         //GETTING POST PARAMS
         $post_params = $facebook->getPostParamsArray();
-        $this->assertEquals( true, is_array($post_params) );
+        $this->assertEquals(true, is_array($post_params));
 
         //GETTING USER DATA
         $graph_object = $facebook->getUserData();
-        $user_id=$graph_object->getId();
+        $user_id = $graph_object->getId();
 
         //PUBLISHING ON WALL
         $post_id = $facebook->postOnWall();
         //test post ID
-        $this->assertEquals(true, gettype($post_id)=='string');
+        $this->assertEquals(true, gettype($post_id) == 'string');
 
         //DELETING POST
         $this->assertEquals(true, $facebook->deletePost($post_id));
@@ -51,34 +51,35 @@ class PublishTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(true, $facebook->deletePost($post_id));
 
         //PUBLISHING ON WALL with setting post params and target user
-        $post_id = $facebook->postOnWall($post_params,$user_id);
+        $post_id = $facebook->postOnWall($post_params, $user_id);
 
         //DELETING POST
         $this->assertEquals(true, $facebook->deletePost($post_id));
 
         //ADDING PICTURE WITH COMMENT TO PICTURES
-        $curl_file = curl_file_create('test_picture.png','image/png','test_name');
-        $post_id = $facebook->postToPhotos($curl_file, 'Test picture');
+        $curl_file = curl_file_create('test_picture.png', 'image/png', 'test_name');
+        $post_id = $facebook->postPhoto($curl_file, 'Test picture');
 
         //DELETING PICTURE POST
         $this->assertEquals(true, $facebook->deletePost($post_id));
     }
 
-    public function testCrossProfile() {
+    public function testCrossProfile()
+    {
         //***TEST CROSS PROFILE ACTIONS***
 
         //Set session as User1
-        $publishUser1 = new Publish($this->access_token1,$this->appId,$this->appSecret);
+        $publishUser1 = new Publish($this->access_token1, $this->appId, $this->appSecret);
 
         //Set session as User2
-        $publishUser2 = new Publish($this->access_token2,$this->appId,$this->appSecret);
+        $publishUser2 = new Publish($this->access_token2, $this->appId, $this->appSecret);
 
         //Check User1's ID
         $idUser1 = $publishUser1->getUserData()->getId();
         echo $linkUser1 = $publishUser2->getUserData($idUser1)->getLink();
 
         //Check User1's link as User2
-        $this->assertEquals( $linkUser1, $publishUser2->getUserData($idUser1)->getLink() ) ;
+        $this->assertEquals($linkUser1, $publishUser2->getUserData($idUser1)->getLink());
 
         //Publish on User1's wall as User2
         //$post_params = $publishUser2->getPostParamsArray( );

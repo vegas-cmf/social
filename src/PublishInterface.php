@@ -8,7 +8,11 @@
 
 namespace Vegas\Social;
 
+interface PublishInterface
+{
+    public function postOnWall($params_array_or_message);
 
-interface PublishInterface {
-    public function postOnWall($post_params , $targetUser);
-} 
+    public function postPhoto($curl_file, $message);
+
+    public function deletePost($post_id);
+}

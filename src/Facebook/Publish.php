@@ -8,25 +8,21 @@
 
 namespace Vegas\Social\Facebook;
 
+use Vegas\Social\PublishInterface;
 
-
-//facebook SDK4
-
-//oauth
-
-class Publish extends Service
+class Publish extends Service implements PublishInterface
 {
     private $_post_params = array();
 
-    public function postOnWall($post_params = array() , $targetUser='me')
+    public function postOnWall($post_params = array(), $targetUser = 'me')
     {
-        $post_id=false;
-        if(count($post_params)>0) {
+        $post_id = false;
+        if (count($post_params) > 0) {
             $this->setPostParamsArray($post_params);
         }
 
         try {
-            $post_id = $this->request('POST','/'.$targetUser.'/feed',$this->_post_params)->getGraphObject()->getProperty('id');
+            $post_id = $this->request('POST', '/' . $targetUser . '/feed', $this->_post_params)->getGraphObject()->getProperty('id');
         } catch (FacebookRequestException $e) {
             throw new \Vegas\Social\Exception('SE7', 'GraphObject exception');
         }
@@ -34,7 +30,7 @@ class Publish extends Service
         return $post_id;
     }
 
-    public function postToPhotos($curl_file, $message, $targetUser='me')
+    public function postPhoto($curl_file, $message, $targetUser = 'me')
     {
         $post_id = false;
 
@@ -44,7 +40,7 @@ class Publish extends Service
         );
 
         try {
-            $post_id = $this->request('POST','/'.$targetUser.'/photos',$params)->getGraphObject()->getProperty('id');
+            $post_id = $this->request('POST', '/' . $targetUser . '/photos', $params)->getGraphObject()->getProperty('id');
         } catch (FacebookRequestException $e) {
             throw new \Vegas\Social\Exception($e->getCode(), $e->getMessage());
         }
@@ -54,8 +50,8 @@ class Publish extends Service
 
     public function deletePost($post_id)
     {
-        if($post_id != '') {
-            $this->request('DELETE','/'.$post_id);
+        if ($post_id != '') {
+            $this->request('DELETE', '/' . $post_id);
             return true;
         }
         throw new \Vegas\Social\Exception('SE6', 'Not valid post id!');
@@ -118,7 +114,8 @@ class Publish extends Service
         //throw new \Vegas\Social\Exception('SE9', 'not valid post params');
     }
 
-    private function validateLink($string) {
+    private function validateLink($string)
+    {
         $pattern = "/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i";
         preg_match($pattern, $string, $matches);
         if (count($matches) == 1 && $matches[0] == $string) return true;
