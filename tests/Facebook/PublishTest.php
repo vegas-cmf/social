@@ -11,10 +11,10 @@ class PublishTest extends \PHPUnit_Framework_TestCase
     private $appSecret = '786207332b78fb7819d375d480c1c3cd';
 
     //TEST USER 1: sicdpmc_goldmanwitz_1411568513@tfbnw.net
-    private $access_token1 = 'CAAKBEjFH044BAJlNIgmUetV6IRlj3gp7SUXoyUzlgI8ytKDks4vH7bDKPPShVaNHVCXhWFO5Tmn2vf2964aZAn0ptK2J7OeYoap8H6tQVQYZC4eExhJYkZARl54qZAtGpiyGKAv8RYhQ0i2cgdaZBv4X08K0vxZCRr0xlJi2We2v4fMffM82cZCmZB95Px7UmXM092A06XxsfolChI9EUMue';
+    private $access_token1 = 'CAAKBEjFH044BABQ0oZBM2NiOgA8iZCzfjsV0lCqcchkIyRIOQVWO05eBZCxoGpCZBZCqwjBidAahu4SKMXeoOfUsW1F2tY3umGLYZCnsJ8ZBLWpb02WdL5lwm7kuS0zGjpNxcLwXN36G7DlzjBIE0zbKv73UDgnASWZCIVzsofQ2uTMCYGsTBpfRCSCzHpRc47lvIUu7Slsg4ZBIeHFhYyL3YWX2izZAWNq4EZD';
 
     //TEST USER 2: vabldmq_sidhuberg_1411568513@tfbnw.net
-    private $access_token2 = 'CAAKBEjFH044BALW1KQZCcXuTDqwYVIncwCYapSZAZBjYjMVCB5Iq4MarBJz6yZBDAx6XGxjcTS3IWPZBe9Nv9MeXFkbXlQtZCrV5eZCkXZCWsZA6FqAZAJbvGZAubGYCLEP68ugfgUygX3bxYdIsqScqZAO3HSRezAI64YbwJUHZBJbKxEbkiDBGkbNy3rpS5kOOtzK8HJZCrAuKfkrQynBjWMDIAN';
+    private $access_token2 = 'CAAKBEjFH044BAP7GYoRsbRYa7qt7P17t5oJVbWRl7WqeUmN4WZAMxVIgMQoXTykFsxadhOBnmunGHks0ryuCPAEqA6ZCpFqZCsFirwWEAhLbIR50eMA1L2GfNlLmfGZAQnYJ94fZBv8d0NvQ1MFX6P1vL8Y4DNbj9XvZAnqdZBDOCiEJFiAZC9z8xNqwqQDrT0mny2n8Sx2ZCQRkbZAy7IxbaxZAn5HDVljAmoZD';
 
     public function testSelfProfile()
     {
