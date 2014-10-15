@@ -13,7 +13,6 @@ use Facebook\FacebookRequestException;
 use Facebook\FacebookSession;
 use Facebook\GraphUser;
 use Phalcon\DI;
-use Vegas\DI\InjectionAwareTrait;
 use Vegas\Security\OAuth;
 
 class Service
@@ -21,10 +20,9 @@ class Service
     protected $_fbsession = false;
     protected $_fbscope = array();
 
-    public function __construct($access_token, $app_id, $app_secret)
+    public function __construct($config)
     {
-        $this->connect($access_token, $app_id, $app_secret);
-        $this->setDefaultMessage();
+        $this->connect($config['access_token'], $config['app_key'], $config['app_secret']);
     }
 
     protected function connect($access_token, $app_id, $app_secret)
@@ -102,62 +100,5 @@ class Service
             return true;
         }
         false;
-    }
-
-    public function refreshToken()
-    {
-        /*    $params = array(
-                'grant_type'        =>  'fb_exchange_token',
-                'fb_exchange_token' =>  $accessToken,
-                'client_id'         =>  $appid,
-                'client_secret'     =>  $appsecret
-            );
-
-
-
-            $fb = new FacebookRequest();
-            $dynamicResult = $fb->get("oauth/acess_token", new {
-                client_id         = "app_id",
-                client_secret     = "app_secret",
-                grant_type        = "fb_exchange_token",
-                fb_exchange_token = "EXISTING_ACCESS_TOKEN"
-            });
-
-            var_dump();
-
-
-            $token = curl('https://graph.facebook.com/oauth/access_token?client_id='.$this->app_id.'&client_secret='.
-                $app_secret.'&grant_type=fb_exchange_token&fb_exchange_token='.$this->_fbsession->getAccessToken());
-        }*/
-
-        /*private function testOauth() {
-            $_SERVER['REQUEST_URI'] = '/login';
-            $di = DI::getDefault();
-            $oauth = new OAuth($di);
-            $service = $oauth->obtainServiceInstance('facebook');
-        }*/
-    }
-
-    public function curlRequest($url)
-    {
-
-        $c = curl_init($url);
-
-        curl_setopt($c, CURLOPT_HTTPGET, true);
-        curl_setopt($c, CURLOPT_FRESH_CONNECT, true);
-        curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-
-        curl_setopt($c, CURLOPT_SSL_VERIFYPEER, TRUE);
-        curl_setopt($c, CURLOPT_CAINFO, FALSE);
-
-        $output = curl_exec($c);
-
-        if ($output === false) {
-            curl_close($c);
-            return false;
-        }
-
-        curl_close($c);
-        return $output;
     }
 }

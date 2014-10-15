@@ -13,21 +13,21 @@ class PublishTest extends \PHPUnit_Framework_TestCase
     );
 
 
-    public function testPublish()
+    public function test()
     {
         $linkedIn = new Publish($this->config);
 
         $user = $linkedIn->getUserData();
-        $this->assertEquals('Vegas', $user['firstName']);
+        $this->assertEquals(true, is_string($user['firstName']));
 
 
-        $post_confiramtion = $linkedIn->postOnWall(true);
-        var_dump($post_confiramtion);
+        $post_confirmation = $linkedIn->post();
+        $this->assertEquals(2, count($post_confirmation));
+        //var_dump($post_confirmation);
 
-        $curl_file = curl_file_create('test_picture.png', 'image/png', 'Test message ' . rand());
-        //$post_confiramtion = $linkedIn->postPhoto($curl_file,"message");
-        var_dump($post_confiramtion);
-
-
+        $linkedIn->setPhoto('http://www.toughzebra.com/wp-content/uploads/Amsterdam.Standard.Logo_.png')->setTitle('Test title' . rand())->setMessage('Test picture' . rand())->setLink('https://github.com/vegas-cmf');
+        $post_confirmation = $linkedIn->post();
+        $this->assertEquals(2, count($post_confirmation));
+        //var_dump($post_confirmation);
     }
 }

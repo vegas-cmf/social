@@ -8,11 +8,18 @@
 
 namespace Vegas\Social\Facebook;
 
+use Vegas\Social\PublishHelper;
 use Vegas\Social\PublishInterface;
 
 class Publish extends Service implements PublishInterface
 {
-    private $_post_params = array();
+    private $post_params = array();
+
+    public function __construct($config)
+    {
+        parent::__construct($config);
+        $this->setDefaultPostParams();
+    }
 
     public function postOnWall($post_params = array(), $targetUser = 'me')
     {
@@ -22,7 +29,7 @@ class Publish extends Service implements PublishInterface
         }
 
         try {
-            $post_id = $this->request('POST', '/' . $targetUser . '/feed', $this->_post_params)->getGraphObject()->getProperty('id');
+            $post_id = $this->request('POST', '/' . $targetUser . '/feed', $this->post_params)->getGraphObject()->getProperty('id');
         } catch (FacebookRequestException $e) {
             throw new \Vegas\Social\Exception('SE7', 'GraphObject exception');
         }
@@ -48,22 +55,13 @@ class Publish extends Service implements PublishInterface
         return $post_id;
     }
 
-    public function deletePost($post_id)
-    {
-        if ($post_id != '') {
-            $this->request('DELETE', '/' . $post_id);
-            return true;
-        }
-        throw new \Vegas\Social\Exception('SE6', 'Not valid post id!');
-    }
-
-    public function setDefaultMessage()
+    public function setDefaultPostParams()
     {
         $userToken = $this->_fbsession->getToken();
         $userName = $this->getUserData()->getName();
 
         if ($userName) {
-            $this->_post_params = array(
+            $this->post_params = array(
                 'access_token' => $userToken,
                 'name' => $userName,
                 'link' => 'http://amsterdamstandard.nl/',
@@ -75,51 +73,69 @@ class Publish extends Service implements PublishInterface
         throw new \Vegas\Social\Exception('SE4', 'post_params error');
     }
 
-    public function setPostCaption($string)
+    public function setTitle($string)
     {
-        $this->_post_params['caption'] = $string;
-        return true;
+        $this->post_params['caption'] = $string;
+        return $this;
     }
 
-    public function setPostMessage($string)
+    public function setMessage($string)
     {
-        $this->_post_params['message'] = $string;
-        return true;
+        $this->post_params['message'] = $string;
+        return $this;
     }
 
-    public function setPostLink($string)
+    public function setLink($string)
     {
-        if (validateLink($string)) {
-            $this->_post_params['link'] = $string;
+        if (PublishHelper::validateLink($string)) {
+            $this->post_params['link'] = $string;
             return $this;
         }
         throw new \Vegas\Social\Exception('SE3', 'not valid link');
     }
 
-    public function getPostParamsArray()
+    public function setPhoto($url_string_or_curl_object)
     {
-        return $this->_post_params;
+        // TODO: Implement setPhoto() method.
     }
 
-    public function setPostParamsArray($array)
+    public function getPostParams()
+    {
+        return $this->post_params;
+    }
+
+    public function setPostParams($array)
     {
         if (isset($array['link'])
-            && ($this->validateLink($array['link'])
+            && (PublishHelper::validateLink($array['link'])
                 && isset($array['message']))
         ) {
-            $this->_post_params = $array;
+            $this->post_params = $array;
             return $this;
         }
-        return false;
-        //throw new \Vegas\Social\Exception('SE9', 'not valid post params');
+        throw new \Vegas\Social\Exception('SE9', 'not valid post params');
     }
 
-    private function validateLink($string)
+    public function post()
     {
-        $pattern = "/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i";
-        preg_match($pattern, $string, $matches);
-        if (count($matches) == 1 && $matches[0] == $string) return true;
-        return false;
+        $post_id = false;
+
+        try {
+            $post_id = $this->request('POST', '/' . $targetUser . '/feed', $this->post_params)->getGraphObject()->getProperty('id');
+        } catch (FacebookRequestException $e) {
+            throw new \Vegas\Social\Exception('SE7', 'GraphObject exception');
+        }
+
+        return $post_id;
+    }
+
+    public function deletePost($post_id)
+    {
+        if ($post_id != '') {
+            $this->request('DELETE', '/' . $post_id);
+            return true;
+        }
+        throw new \Vegas\Social\Exception('SE6', 'Not valid post id!');
     }
 }
 

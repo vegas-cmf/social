@@ -10,9 +10,19 @@ namespace Vegas\Social;
 
 interface PublishInterface
 {
-    public function postOnWall($params_array_or_message);
+    public function setDefaultPostParams(); //executed also in __construct
 
-    public function postPhoto($curl_file, $message);
+    public function setTitle($string);
 
-    public function deletePost($post_id);
+    public function setMessage($string);
+
+    public function setLink($string);
+
+    public function setPhoto($photo); //url or curl object
+
+    public function getPostParams();
+
+    public function setPostParams($array);
+
+    public function post();
 }
