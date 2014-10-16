@@ -32,7 +32,7 @@ class PublishTest extends \PHPUnit_Framework_TestCase
         //delete post
         $this->assertEquals($post_id, $twitter->deletePost($post_id));
 
-        //add photo post
+        //set photo post
         $curl_file = curl_file_create(dirname(__DIR__) . '/test_picture.png', 'image/png', 'Test message ' . rand());
         $twitter->setPhoto($curl_file)->setTitle("Photo test" . rand())->setMessage("...")->setLink("http://amsterdamstandard.com");
         $post_id = $twitter->post();
@@ -51,5 +51,43 @@ class PublishTest extends \PHPUnit_Framework_TestCase
 
         //delete photo post
         $this->assertEquals($post_id, $twitter->deletePost($post_id));
+    }
+
+    public function testExceptions()
+    {
+        $publishObject = new Publish($this->config);
+
+        //SET PHOTO - EXCEPTION TEST
+        try {
+            $publishObject->setPhoto('1234');
+            throw new \Exception('Not this exception.');
+        } catch (\Exception $ex) {
+            $this->assertInstanceOf('\Vegas\Social\Exception', $ex);
+        }
+
+        //SET LINK - EXCEPTION TEST
+        try {
+            $publishObject->setLink('1234');
+            throw new \Exception('Not this exception.');
+        } catch (\Exception $ex) {
+            $this->assertInstanceOf('\Vegas\Social\Exception', $ex);
+        }
+
+        //POST PHOTO that does not exist - EXCEPTION TEST
+        try {
+            $publishObject->setPhoto('http://www.fake.com/does_not_exist.png');
+            $publishObject->post();
+            throw new \Exception('Not this exception.');
+        } catch (\Exception $ex) {
+            $this->assertInstanceOf('\Vegas\Social\Exception', $ex);
+        }
+
+        //wrong POST PARAMS - EXCEPTION TEST
+        try {
+            $publishObject->setPostParams(array('fake' => 'fake'));
+            throw new \Exception('Not this exception.');
+        } catch (\Exception $ex) {
+            $this->assertInstanceOf('\Vegas\Social\Exception', $ex);
+        }
     }
 }

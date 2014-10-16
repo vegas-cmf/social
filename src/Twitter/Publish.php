@@ -25,26 +25,6 @@ class Publish extends Service implements PublishInterface
         $this->setDefaultPostParams();
     }
 
-    public function postPhoto($curl_file, $message)
-    {
-        $params = array(
-            'media[]' => $curl_file,
-            'status' => $message
-        );
-
-        $code = $this->user_request(array(
-            'method' => 'POST',
-            'url' => $this->url("1.1/statuses/update_with_media"),
-            'params' => $params,
-            'multipart' => true
-        ));
-
-        if ($code == 200) {
-            $response = json_decode($this->response['response'], true);
-            return $response['id'];
-        } else throw new \Vegas\Social\Exception("Twitter error: " . $code, '');
-    }
-
     public function setDefaultPostParams()
     {
         $this->post_params = array(
@@ -126,6 +106,9 @@ class Publish extends Service implements PublishInterface
 
     public function setPostParams($array)
     {
+        if (!isset($array['method']) || $array['method'] != 'POST') throw new \Vegas\Social\Exception("Twitter error: ", 'method is wrong or ot set');
+        if (!isset($array['params']['status'])) throw new \Vegas\Social\Exception("Twitter error: ", 'params.status is not set');
+
         $this->post_params = $array;
         return $this;
     }
@@ -145,16 +128,20 @@ class Publish extends Service implements PublishInterface
 
     public function deletePost($id)
     {
-        $code = $this->user_request(array(
-            'method' => 'POST',
-            'url' => $this->url("1.1/statuses/destroy/" . $id),
-            'params' => array()
-        ));
+        try {
+            $code = $this->user_request(array(
+                'method' => 'POST',
+                'url' => $this->url("1.1/statuses/destroy/" . $id),
+                'params' => array()
+            ));
 
-        if ($code == 200) {
-            $response = json_decode($this->response['response'], true);
-            return $response['id'];
-        } else throw new \Vegas\Social\Exception("Twitter error: " . $code, var_export($response, true));
+            if ($code == 200) {
+                $response = json_decode($this->response['response'], true);
+                return $response['id'];
+            }
+        } catch (\Exception $ex) {
+            throw new \Vegas\Social\Exception("Twitter error: ", var_export($ex, true));
+        }
     }
 
     public function __destruct()
