@@ -96,9 +96,8 @@ class Service
     public function validateUser($userId)
     {
         if ($this->getUserData($userId)->getId() == $userId) {
-            echo gettype($this->getUserData($userId));
-            return true;
+            if ($userId == $this->getUserData($userId)->getId()) return true;
         }
-        false;
+        return false;
     }
 }

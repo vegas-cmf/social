@@ -14,45 +14,13 @@ use Vegas\Social\PublishInterface;
 class Publish extends Service implements PublishInterface
 {
     private $post_params = array();
+    private $publish_area;
+    private $target_user;
 
     public function __construct($config)
     {
         parent::__construct($config);
         $this->setDefaultPostParams();
-    }
-
-    public function postOnWall($post_params = array(), $targetUser = 'me')
-    {
-        $post_id = false;
-        if (count($post_params) > 0) {
-            $this->setPostParamsArray($post_params);
-        }
-
-        try {
-            $post_id = $this->request('POST', '/' . $targetUser . '/feed', $this->post_params)->getGraphObject()->getProperty('id');
-        } catch (FacebookRequestException $e) {
-            throw new \Vegas\Social\Exception('SE7', 'GraphObject exception');
-        }
-
-        return $post_id;
-    }
-
-    public function postPhoto($curl_file, $message, $targetUser = 'me')
-    {
-        $post_id = false;
-
-        $params = array(
-            'source' => $curl_file,
-            'message' => $message
-        );
-
-        try {
-            $post_id = $this->request('POST', '/' . $targetUser . '/photos', $params)->getGraphObject()->getProperty('id');
-        } catch (FacebookRequestException $e) {
-            throw new \Vegas\Social\Exception($e->getCode(), $e->getMessage());
-        }
-
-        return $post_id;
     }
 
     public function setDefaultPostParams()
@@ -68,7 +36,11 @@ class Publish extends Service implements PublishInterface
                 'caption' => 'Test caption',
                 'message' => 'Test message',
             );
-            return true;
+
+            $this->publish_area = 'feed';
+            $this->target_user = 'me';
+
+            return $this;
         }
         throw new \Vegas\Social\Exception('SE4', 'post_params error');
     }
@@ -94,9 +66,23 @@ class Publish extends Service implements PublishInterface
         throw new \Vegas\Social\Exception('SE3', 'not valid link');
     }
 
-    public function setPhoto($url_string_or_curl_object)
+    public function setPhoto($photo)
     {
-        // TODO: Implement setPhoto() method.
+        $this->publish_area = 'photos';
+        $message = $this->post_params['message'];
+        $this->post_params = array(
+            'message' => $message
+        );
+
+        if (gettype($photo) == 'object' && get_class($photo) == 'CURLFile') {
+            $this->post_params['source'] = $photo;
+        } else if (gettype($photo) == 'string' && PublishHelper::validateLink($photo)) {
+            $this->post_params['url'] = $photo;
+        } else {
+            throw new \Vegas\Social\Exception('SE3', 'not valid argument in setPhoto');
+        }
+
+        return $this;
     }
 
     public function getPostParams()
@@ -106,8 +92,8 @@ class Publish extends Service implements PublishInterface
 
     public function setPostParams($array)
     {
-        if (isset($array['link'])
-            && (PublishHelper::validateLink($array['link'])
+        if (isset($array['url'])
+            && (PublishHelper::validateLink($array['url'])
                 && isset($array['message']))
         ) {
             $this->post_params = $array;
@@ -121,7 +107,7 @@ class Publish extends Service implements PublishInterface
         $post_id = false;
 
         try {
-            $post_id = $this->request('POST', '/' . $targetUser . '/feed', $this->post_params)->getGraphObject()->getProperty('id');
+            $post_id = $this->request('POST', '/' . $this->target_user . '/' . $this->publish_area, $this->post_params)->getGraphObject()->getProperty('id');
         } catch (FacebookRequestException $e) {
             throw new \Vegas\Social\Exception('SE7', 'GraphObject exception');
         }
@@ -131,11 +117,13 @@ class Publish extends Service implements PublishInterface
 
     public function deletePost($post_id)
     {
-        if ($post_id != '') {
+        try {
             $this->request('DELETE', '/' . $post_id);
-            return true;
+        } catch (FacebookRequestException $e) {
+            throw new \Vegas\Social\Exception('SE6', 'Could not delete post.');
         }
-        throw new \Vegas\Social\Exception('SE6', 'Not valid post id!');
+
+        return $post_id;
     }
 }
 

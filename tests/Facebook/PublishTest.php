@@ -9,8 +9,8 @@ class PublishTest extends \PHPUnit_Framework_TestCase
     private $config = array(
         'app_key' => '704865089606542',
         'app_secret' => '786207332b78fb7819d375d480c1c3cd',
-        'access_token' => 'CAAKBEjFH044BAFYbyFgTS5cXxs5cGcsqmsRTGjr0i6ZAuvhjYh0uOZCU1rKSrIalr2OvDWUGMyz5Bskd4mynO7ijuZAeIeIhofd8B8yiYvtD5pmyVTE7nLnDkqPjp4NvjP02AJStfibbezadHPyR3amEoca2wFwGUJchR70fSS7dZAeEzw9d1qOQMZBxQjX6CvybmPcwmKin7ynzqbZAMwg6rjnooOxHIZD'
-    );
+        'access_token' => 'CAAKBEjFH044BAIIz2eFnS2sVZA0prvVhUA99rPZC8nP32Xtw6T595YuoDXcjgszFSWPNXLzzvtD7sba6FqX373KoOxIbRZAZCP4ZBD8gBZB6jIRvVvLAsqApQLYMxugmQPYlRfxdWBZA3SIYzqBPflIOEvAhll7ybSfOJtK7c7SZCe9zZAui0DmSuLrtC5gjiUqsZD'
+    ); //the wall of this test profile: https://www.facebook.com/profile.php?id=100007822967538
 
     public function test()
     {
@@ -21,45 +21,90 @@ class PublishTest extends \PHPUnit_Framework_TestCase
         $graph_object = $facebook->getUserData();
         $user_id = $graph_object->getId();
 
+        //VALIDATE USER
+        $this->assertEquals(true, $facebook->validateUser($user_id));
+
         //PUBLISHING ON WALL
-        $post_id = $facebook->postOnWall();
+        $post_id = $facebook->post();
         //test post ID
         $this->assertEquals(true, gettype($post_id) == 'string');
 
         //DELETING POST
-        $this->assertEquals(true, $facebook->deletePost($post_id));
+        $this->assertEquals($post_id, $facebook->deletePost($post_id));
 
-        /*
-                //SETTING POST PARAMS
-                $this->assertEquals($facebook, $facebook->setPostParamsArray(array('link' => 'http://amsterdamstandard.com', 'message' => 'test', 'caption' => 'test caption')));
-                $this->assertEquals(false, $facebook->setPostParamsArray(array('link' => 'not_a_link', 'message' => 'test')));
+        //ADDING CURL PICTURE WITH COMMENT TO PICTURES
+        $curl_file = curl_file_create(dirname(__DIR__) . '/test_picture.png', 'image/png', 'test_name');
+        $post_id = $facebook->setPhoto($curl_file)->post();
 
-                //GETTING POST PARAMS
-                $post_params = $facebook->getPostParamsArray();
-                $this->assertEquals(true, is_array($post_params));
+        //DELETING PICTURE POST
+        $this->assertEquals($post_id, $facebook->deletePost($post_id));
 
+        $facebook = new Publish($this->config);
 
+        //ADDING PICTURE TO PHOTOS BY URL
+        $facebook->setPhoto('http://www.toughzebra.com/wp-content/uploads/Amsterdam.Standard.Logo_.png');
 
+        //SET POST TEXTS
+        $facebook->setMessage("Testing, testing..." . rand())->setTitle("Testing, testing..." . rand())->setLink("http://amsterdamstandard.com/");
 
+        //GET POST PARAMS
+        $post_params = $facebook->getPostParams();
+        $this->assertEquals('array', gettype($post_params));
 
-                //PUBLISHING ON WALL with setting post params
-                $facebook->validateUser($user_id);
-                $post_id = $facebook->postOnWall($post_params);
+        //SET POST PARAMS
+        $facebook->setPostParams($post_params);
+        $this->assertEquals('array', gettype($post_params));
 
-                //DELETING POST
-                $this->assertEquals(true, $facebook->deletePost($post_id));
+        //POST
+        $post_id = $facebook->post();
 
-                //PUBLISHING ON WALL with setting post params and target user
-                $post_id = $facebook->postOnWall($post_params, $user_id);
+        //DELETING PICTURE POST
+        $this->assertEquals($post_id, $facebook->deletePost($post_id));
+    }
 
-                //DELETING POST
-                $this->assertEquals(true, $facebook->deletePost($post_id));
+    public function testExceptions()
+    {
+        $facebook = new Publish($this->config);
 
-                //ADDING PICTURE WITH COMMENT TO PICTURES
-                $curl_file = curl_file_create('../test_picture.png', 'image/png', 'test_name');
-                $post_id = $facebook->postPhoto($curl_file, 'Test picture');
+        //DELETING POST - EXCEPTION TEST
+        try {
+            $facebook->deletePost('fake');
+            throw new \Exception('Not this exception.');
+        } catch (\Exception $ex) {
+            $this->assertInstanceOf('\Vegas\Social\Exception', $ex);
+        }
 
-                //DELETING PICTURE POST
-                $this->assertEquals(true, $facebook->deletePost($post_id));*/
+        //SET PHOTO - EXCEPTION TEST
+        try {
+            $facebook->setPhoto('1234');
+            throw new \Exception('Not this exception.');
+        } catch (\Exception $ex) {
+            $this->assertInstanceOf('\Vegas\Social\Exception', $ex);
+        }
+
+        //SET LINK - EXCEPTION TEST
+        try {
+            $facebook->setLink('1234');
+            throw new \Exception('Not this exception.');
+        } catch (\Exception $ex) {
+            $this->assertInstanceOf('\Vegas\Social\Exception', $ex);
+        }
+
+        //POST PHOTO that does not exist - EXCEPTION TEST
+        try {
+            $facebook->setPhoto('http://www.fake.com/does_not_exist.png');
+            $facebook->post();
+            throw new \Exception('Not this exception.');
+        } catch (\Exception $ex) {
+            $this->assertInstanceOf('\Vegas\Social\Exception', $ex);
+        }
+
+        //wrong POST PARAMS - EXCEPTION TEST
+        try {
+            $facebook->setPostParams(array('fake' => 'fake'));
+            throw new \Exception('Not this exception.');
+        } catch (\Exception $ex) {
+            $this->assertInstanceOf('\Vegas\Social\Exception', $ex);
+        }
     }
 }

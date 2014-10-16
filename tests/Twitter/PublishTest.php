@@ -33,8 +33,20 @@ class PublishTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($post_id, $twitter->deletePost($post_id));
 
         //add photo post
-        $curl_file = curl_file_create('../test_picture.png', 'image/png', 'Test message ' . rand());
+        $curl_file = curl_file_create(dirname(__DIR__) . '/test_picture.png', 'image/png', 'Test message ' . rand());
         $twitter->setPhoto($curl_file)->setTitle("Photo test" . rand())->setMessage("...")->setLink("http://amsterdamstandard.com");
+        $post_id = $twitter->post();
+
+        //delete photo post
+        $this->assertEquals($post_id, $twitter->deletePost($post_id));
+    }
+
+    public function test2()
+    {
+        $twitter = new Publish($this->config);
+
+        //add photo post using photo url
+        $twitter->setPhoto('http://www.toughzebra.com/wp-content/uploads/Amsterdam.Standard.Logo_.png', 'image/png')->setMessage("Photo url test" . rand());
         $post_id = $twitter->post();
 
         //delete photo post

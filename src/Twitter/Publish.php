@@ -17,32 +17,12 @@ class Publish extends Service implements PublishInterface
     private $post_title = '';
     private $post_message = '';
     private $post_link = '';
+    private $tmp_file = '';
 
     public function __construct($config)
     {
         parent::__construct($config);
         $this->setDefaultPostParams();
-    }
-
-    public function postOnWall($params = array())
-    {
-        if (is_string($params)) $message = $params;
-        else $message = 'test message ' . rand();
-
-        if (!is_array($params) || count($params) == 0) $params = array(
-            'status' => $message
-        );
-
-        $code = $this->user_request(array(
-            'method' => 'POST',
-            'url' => $this->url('1.1/statuses/update'),
-            'params' => $params
-        ));
-
-        if ($code == 200) {
-            $response = json_decode($this->response['response'], true);
-            return $response['id'];
-        } else throw new \Vegas\Social\Exception("Twitter error: " . $code, '');
     }
 
     public function postPhoto($curl_file, $message)
@@ -121,8 +101,19 @@ class Publish extends Service implements PublishInterface
 
     public function setPhoto($photo)
     {
+        if (gettype($photo) == 'object' && get_class($photo) == 'CURLFile') {
+            $this->post_params['params']['media[]'] = $photo;
+        } else if (gettype($photo) == 'string' && PublishHelper::validateLink($photo)) {
+            $this->tmp_file = './image_tmp' . time();
+            file_put_contents($this->tmp_file, file_get_contents($photo));
+            $file_type = image_type_to_mime_type(exif_imagetype($this->tmp_file));
+            $curl_file = curl_file_create($this->tmp_file, $file_type, $this->post_message);
+            $this->post_params['params']['media[]'] = $curl_file;
+        } else {
+            throw new \Vegas\Social\Exception('Twitter error: ', 'not valid argument in setPhoto');
+        }
+
         $this->post_params['url'] = $this->url("1.1/statuses/update_with_media");
-        $this->post_params['params']['media[]'] = $photo;
         $this->post_params['multipart'] = true;
 
         return $this;
@@ -148,6 +139,7 @@ class Publish extends Service implements PublishInterface
         }
 
         $response = json_decode($this->response['response'], true);
+
         return $response['id'];
     }
 
@@ -162,7 +154,13 @@ class Publish extends Service implements PublishInterface
         if ($code == 200) {
             $response = json_decode($this->response['response'], true);
             return $response['id'];
-        } else throw new \Vegas\Social\Exception("Twitter error: " . $code, '');
+        } else throw new \Vegas\Social\Exception("Twitter error: " . $code, var_export($response, true));
+    }
+
+    public function __destruct()
+    {
+        if ($this->tmp_file != '') unlink($this->tmp_file);
+        $this->tmp_file = '';
     }
 }
 
