@@ -35,6 +35,13 @@ class PublishTest extends \PHPUnit_Framework_TestCase
         //set photo post
         $curl_file = curl_file_create(dirname(__DIR__) . '/test_picture.png', 'image/png', 'Test message ' . rand());
         $twitter->setPhoto($curl_file)->setTitle("Photo test" . rand())->setMessage("...")->setLink("http://amsterdamstandard.com");
+
+        //get and set params
+        $post_params = $twitter->getPostParams();
+        $post_params_after_set = $twitter->setPostParams($post_params)->getPostParams();
+        $this->assertEquals($post_params, $post_params_after_set);
+
+        //post custom tweet
         $post_id = $twitter->post();
 
         //delete photo post
