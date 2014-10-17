@@ -1,27 +1,53 @@
 <?php
+/**
+ * This file is part of Vegas package
+ *
+ * @author Tomasz Borodziuk <tomasz.borodziuk@amsterdam-standard.pl>
+ * @copyright Amsterdam Standard Sp. Z o.o.
+ * @homepage http://vegas-cmf.github.io
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Vegas\Social\LinkedIn;
 
 use Vegas\Social\PublishHelper;
 use Vegas\Social\PublishInterface;
 
+/**
+ * Class Publish
+ * @package Vegas\Social\LinkedIn
+ */
 class Publish extends Service implements PublishInterface
 {
-    private $post_params = array();
+    /**
+     * @var array
+     */
+    private $postParams = array();
 
+    /**
+     * @param $config
+     */
     public function __construct($config)
     {
         parent::__construct($config);
         $this->setDefaultPostParams();
     }
 
+    /**
+     * @return mixed
+     */
     public function post()
     {
         $extra_headers = array('Content-type' => 'application/json');
-        $result = json_decode($this->service->request('/people/~/shares?format=json', 'POST', json_encode($this->post_params), $extra_headers), true);
+        $result = json_decode($this->service->request('/people/~/shares?format=json', 'POST', json_encode($this->postParams), $extra_headers), true);
         return $result;
     }
 
+    /**
+     * @return $this
+     */
     public function setDefaultPostParams()
     {
         $post = array(
@@ -29,41 +55,59 @@ class Publish extends Service implements PublishInterface
             'content' => array(
                 'title' => 'Test' . rand(),
                 'description' => 'Linkedin',
-                'submitted-url' => 'http://amsterdamstandard.com?q=' . rand()
+                'submitted-url' => 'http://testdomain.com?q=' . rand()
             ),
             'visibility' => array('code' => 'anyone')
         );
 
-        $this->post_params = $post;
+        $this->postParams = $post;
 
         return $this;
     }
 
+    /**
+     * @param $string
+     * @return $this
+     */
     public function setTitle($string)
     {
-        $this->post_params['content']['title'] = $string;
+        $this->postParams['content']['title'] = $string;
 
         return $this;
     }
 
+    /**
+     * @param $string
+     * @return $this
+     */
     public function setMessage($string)
     {
-        $this->post_params['content']['description'] = $string;
+        $this->postParams['content']['description'] = $string;
 
         return $this;
     }
 
+    /**
+     * @param $url
+     * @return $this
+     * @throws \Vegas\Social\Exception
+     */
     public function setLink($url)
     {
         if (!is_string($url) || !PublishHelper::validateLink($url)) {
             throw new \Vegas\Social\Exception("LinkedIn error", "setLink - url is not valid");
         }
 
-        $this->post_params['content']['submitted-url'] = $url;
+        $this->postParams['content']['submitted-url'] = $url;
 
         return $this;
     }
 
+    /**
+     * @param $url
+     * @return $this
+     * @throws \Vegas\Social\Exception
+     */
     public function setPhoto($url)
     {
         if (!is_string($url)) {
@@ -74,24 +118,32 @@ class Publish extends Service implements PublishInterface
             throw new \Vegas\Social\Exception("LinkedIn error", "setPhoto - url is not valid" . $url);
         }
 
-        $this->post_params['content']['submitted-image-url'] = $url;
+        $this->postParams['content']['submitted-image-url'] = $url;
 
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getPostParams()
     {
-        return $this->post_params;
+        return $this->postParams;
     }
 
-    public function setPostParams($post_params)
+    /**
+     * @param $postParams
+     * @return $this
+     * @throws \Vegas\Social\Exception
+     */
+    public function setPostParams($postParams)
     {
         //check required params
-        if (!isset($post_params['content']) || !isset($post_params['content']['title']) || !isset($post_params['content']['submitted-url'])) {
+        if (!isset($postParams['content']) || !isset($postParams['content']['title']) || !isset($postParams['content']['submitted-url'])) {
             throw new \Vegas\Social\Exception("LinkedIn error", "setPostParams - required params content/title or content/submitted-url are not set");
-        } else $this->setLink($post_params['content']['submitted-url']);
+        } else $this->setLink($postParams['content']['submitted-url']);
 
-        $this->post_params = $post_params;
+        $this->postParams = $postParams;
 
         return $this;
     }

@@ -167,31 +167,31 @@ class Publish extends Service implements PublishInterface
      */
     public function post()
     {
-        $post_id = false;
+        $postId = false;
 
         try {
-            $post_id = $this->request('POST', '/' . $this->targetUser . '/' . $this->publishArea, $this->postParams)->getGraphObject()->getProperty('id');
+            $postId = $this->request('POST', '/' . $this->targetUser . '/' . $this->publishArea, $this->postParams)->getGraphObject()->getProperty('id');
         } catch (FacebookRequestException $e) {
             throw new \Vegas\Social\Exception('SE7', 'GraphObject exception');
         }
 
-        return $post_id;
+        return $postId;
     }
 
     /**
-     * @param $post_id
+     * @param $postId
      * @return mixed
      * @throws \Vegas\Social\Exception
      */
-    public function deletePost($post_id)
+    public function deletePost($postId)
     {
         try {
-            $this->request('DELETE', '/' . $post_id);
+            $this->request('DELETE', '/' . $postId);
         } catch (FacebookRequestException $e) {
             throw new \Vegas\Social\Exception('SE6', 'Could not delete post.');
         }
 
-        return $post_id;
+        return $postId;
     }
 }
 

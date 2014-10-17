@@ -53,17 +53,17 @@ class Service
     }
 
     /**
-     * @param $access_token
-     * @param $app_id
-     * @param $app_secret
+     * @param $accessToken
+     * @param $appId
+     * @param $appSecret
      * @throws \Vegas\Social\Exception
      */
-    protected function connect($access_token, $app_id, $app_secret)
+    protected function connect($accessToken, $appId, $appSecret)
     {
-        $session = new FacebookSession($access_token);
-        $session->setDefaultApplication($app_id, $app_secret);
+        $session = new FacebookSession($accessToken);
+        $session->setDefaultApplication($appId, $appSecret);
 
-        if ($session->getToken() == $access_token) {
+        if ($session->getToken() == $accessToken) {
             $this->fbSession = $session;
             $this->fbScope = $session->getSessionInfo()->getScopes();
 
