@@ -1,9 +1,13 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: tborodziuk
- * Date: 19.09.14
- * Time: 12:09
+ * This file is part of Vegas package
+ *
+ * @author Tomasz Borodziuk <tomasz.borodziuk@amsterdam-standard.pl>
+ * @copyright Amsterdam Standard Sp. Z o.o.
+ * @homepage http://vegas-cmf.github.io
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace Vegas\Social\Facebook;
@@ -11,73 +15,121 @@ namespace Vegas\Social\Facebook;
 use Vegas\Social\PublishHelper;
 use Vegas\Social\PublishInterface;
 
+/**
+ * Class Publish
+ * @package Vegas\Social\Facebook
+ */
 class Publish extends Service implements PublishInterface
 {
-    private $post_params = array();
-    private $publish_area;
-    private $target_user;
+    /**
+     * @var array
+     */
+    private $postParams = array();
 
+    /**
+     * @var string, for example 'feed' or 'photos'
+     */
+    private $publishArea;
+
+    /**
+     * @var
+     */
+    private $targetUser;
+
+    /**
+     * @param $config
+     * @throws \Vegas\Social\Exception
+     *
+     * param example:
+     *
+     * $config = array(
+     *  'app_key' => '704865089606542',
+     *  'app_secret' => '786207332b78fb7819d375d480c1c3cd',
+     *  'access_token' => 'CAAKBEjFH044BAIIz2eFnS2sVZA0prvVhUA99rPZC8nP32Xtw6T595YuoDXcjgszFSWPNXLzzvtD7sba6FqX373KoOxIbRZAZCP4ZBD8gBZB6jIRvVvLAsqApQLYMxugmQPYlRfxdWBZA3SIYzqBPflIOEvAhll7ybSfOJtK7c7SZCe9zZAui0DmSuLrtC5gjiUqsZD'
+     * );
+     *
+     */
     public function __construct($config)
     {
         parent::__construct($config);
         $this->setDefaultPostParams();
     }
 
+    /**
+     * @throws \Vegas\Social\Exception
+     */
     public function setDefaultPostParams()
     {
-        $userToken = $this->_fbsession->getToken();
+        $userToken = $this->fbSession->getToken();
         $userName = $this->getUserData()->getName();
 
         if ($userName) {
-            $this->post_params = array(
+            $this->postParams = array(
                 'access_token' => $userToken,
                 'name' => $userName,
-                'link' => 'http://amsterdamstandard.nl/',
+                'link' => 'http://testdomain.com/',
                 'caption' => 'Test caption',
                 'message' => 'Test message',
             );
 
-            $this->publish_area = 'feed';
-            $this->target_user = 'me';
+            $this->publishArea = 'feed';
+            $this->targetUser = 'me';
 
             return $this;
         }
-        throw new \Vegas\Social\Exception('SE4', 'post_params error');
+        throw new \Vegas\Social\Exception('SE4', 'postParams error');
     }
 
+    /**
+     * @param $string
+     * @return $this
+     */
     public function setTitle($string)
     {
-        $this->post_params['caption'] = $string;
+        $this->postParams['caption'] = $string;
         return $this;
     }
 
+    /**
+     * @param $string
+     * @return $this
+     */
     public function setMessage($string)
     {
-        $this->post_params['message'] = $string;
+        $this->postParams['message'] = $string;
         return $this;
     }
 
+    /**
+     * @param $string
+     * @throws \Vegas\Social\Exception
+     */
     public function setLink($string)
     {
         if (PublishHelper::validateLink($string)) {
-            $this->post_params['link'] = $string;
+            $this->postParams['link'] = $string;
             return $this;
         }
         throw new \Vegas\Social\Exception('SE3', 'not valid link');
     }
 
+    /**
+     * @param $photo
+     * @return $this
+     * @throws \Vegas\Social\Exception
+     */
     public function setPhoto($photo)
     {
-        $this->publish_area = 'photos';
-        $message = $this->post_params['message'];
-        $this->post_params = array(
+        $this->publishArea = 'photos';
+        $message = $this->postParams['message'];
+        $this->postParams = array(
             'message' => $message
         );
 
         if (gettype($photo) == 'object' && get_class($photo) == 'CURLFile') {
-            $this->post_params['source'] = $photo;
+            $this->postParams['source'] = $photo;
         } else if (gettype($photo) == 'string' && PublishHelper::validateLink($photo)) {
-            $this->post_params['url'] = $photo;
+            $this->postParams['url'] = $photo;
         } else {
             throw new \Vegas\Social\Exception('SE3', 'not valid argument in setPhoto');
         }
@@ -85,29 +137,40 @@ class Publish extends Service implements PublishInterface
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getPostParams()
     {
-        return $this->post_params;
+        return $this->postParams;
     }
 
+    /**
+     * @param $array
+     * @throws \Vegas\Social\Exception
+     */
     public function setPostParams($array)
     {
         if (isset($array['url'])
             && (PublishHelper::validateLink($array['url'])
                 && isset($array['message']))
         ) {
-            $this->post_params = $array;
+            $this->postParams = $array;
             return $this;
         }
         throw new \Vegas\Social\Exception('SE9', 'not valid post params');
     }
 
+    /**
+     * @return bool
+     * @throws \Vegas\Social\Exception
+     */
     public function post()
     {
         $post_id = false;
 
         try {
-            $post_id = $this->request('POST', '/' . $this->target_user . '/' . $this->publish_area, $this->post_params)->getGraphObject()->getProperty('id');
+            $post_id = $this->request('POST', '/' . $this->targetUser . '/' . $this->publishArea, $this->postParams)->getGraphObject()->getProperty('id');
         } catch (FacebookRequestException $e) {
             throw new \Vegas\Social\Exception('SE7', 'GraphObject exception');
         }
@@ -115,6 +178,11 @@ class Publish extends Service implements PublishInterface
         return $post_id;
     }
 
+    /**
+     * @param $post_id
+     * @return mixed
+     * @throws \Vegas\Social\Exception
+     */
     public function deletePost($post_id)
     {
         try {
