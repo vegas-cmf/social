@@ -53,7 +53,7 @@ class PublishTest extends \PHPUnit_Framework_TestCase
             $publishObject->setLink('1234');
             throw new \Exception('Not this exception.');
         } catch (\Exception $ex) {
-            $this->assertInstanceOf('\Vegas\Social\Exception', $ex);
+            $this->assertInstanceOf('\Vegas\Social\Exception\InvalidLinkException', $ex);
         }
 
         //wrong POST PARAMS - EXCEPTION TEST
@@ -61,7 +61,7 @@ class PublishTest extends \PHPUnit_Framework_TestCase
             $publishObject->setPostParams(array('fake' => 'fake'));
             throw new \Exception('Not this exception.');
         } catch (\Exception $ex) {
-            $this->assertInstanceOf('\Vegas\Social\Exception', $ex);
+            $this->assertInstanceOf('\Vegas\Social\Exception\InvalidPostParamsException', $ex);
         }
     }
 }

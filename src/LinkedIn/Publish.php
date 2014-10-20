@@ -98,12 +98,15 @@ class Publish extends Service implements PublishInterface
     /**
      * @param $url
      * @return $this
-     * @throws \Vegas\Social\Exception
+     * @throws \Vegas\Social\Exception\InvalidLinkException
      */
     public function setLink($url)
     {
-        if (!is_string($url) || !PublishHelper::validateLink($url)) {
-            throw new \Vegas\Social\Exception("setLink - url is not valid");
+        if (!is_string($url)) {
+            throw new \Vegas\Social\Exception\InvalidLinkException('');
+        }
+        if (!PublishHelper::validateLink($url)) {
+            throw new \Vegas\Social\Exception\InvalidLinkException($url);
         }
 
         $this->postParams['content']['submitted-url'] = $url;
@@ -114,16 +117,17 @@ class Publish extends Service implements PublishInterface
     /**
      * @param $url
      * @return $this
-     * @throws \Vegas\Social\Exception
+     * @throws \Vegas\Social\Exception\InvalidArgumentException
+     * @throws \Vegas\Social\Exception\InvalidLinkException
      */
     public function setPhoto($url)
     {
         if (!is_string($url)) {
-            throw new \Vegas\Social\Exception("setPhoto - argument is not a string");
+            throw new \Vegas\Social\Exception\InvalidArgumentException('setPhoto');
         }
 
         if (!PublishHelper::validateLink($url)) {
-            throw new \Vegas\Social\Exception("setPhoto - url is not valid" . $url);
+            throw new \Vegas\Social\Exception\InvalidLinkException($url);
         }
 
         $this->postParams['content']['submitted-image-url'] = $url;
@@ -142,15 +146,16 @@ class Publish extends Service implements PublishInterface
     /**
      * @param $postParams
      * @return $this
-     * @throws \Vegas\Social\Exception
+     * @throws \Vegas\Social\Exception\InvalidPostParamsException
      */
     public function setPostParams($postParams)
     {
         //check required params
-        if (!isset($postParams['content']) || !isset($postParams['content']['title']) || !isset($postParams['content']['submitted-url'])) {
-            throw new \Vegas\Social\Exception("setPostParams - required params content/title or content/submitted-url are not set");
-        } else $this->setLink($postParams['content']['submitted-url']);
+        if (!isset($postParams['content'])) throw new \Vegas\Social\Exception\InvalidPostParamsException('content');
+        if (!isset($postParams['content']['title'])) throw new \Vegas\Social\Exception\InvalidPostParamsException('content.title');
+        if (!isset($postParams['content']['submitted-url'])) throw new \Vegas\Social\Exception\InvalidPostParamsException('content.submitted-url');
 
+        $this->setLink($postParams['content']['submitted-url']);
         $this->postParams = $postParams;
 
         return $this;

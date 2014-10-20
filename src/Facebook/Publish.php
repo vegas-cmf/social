@@ -131,7 +131,7 @@ class Publish extends Service implements PublishInterface
         } else if (gettype($photo) == 'string' && PublishHelper::validateLink($photo)) {
             $this->postParams['url'] = $photo;
         } else {
-            throw new \Vegas\Social\Exception('not valid argument in setPhoto');
+            throw new \Vegas\Social\Exception\InvalidArgumentException('setPhoto');
         }
 
         return $this;

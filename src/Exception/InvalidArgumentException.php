@@ -13,21 +13,21 @@
 namespace Vegas\Social\Exception;
 
 /**
- * Class InvalidLinkException
+ * Class InvalidArgumentException
  * @package Vegas\Social\Exception
  */
-class InvalidLinkException extends \Vegas\Social\Exception
+class InvalidArgumentException extends \Vegas\Social\Exception
 {
     /**
      * @var string
      */
-    protected $message = 'Link `%s` is not valid';
+    protected $message = 'Invalid argument in `%s`';
 
     /**
-     * @param string $link
+     * @param string $string
      */
-    public function __construct($link)
+    public function __construct($string)
     {
-        $this->message = sprintf($this->message, $link);
+        $this->message = sprintf($this->message, $string);
     }
-} 
+}
