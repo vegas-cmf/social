@@ -24,13 +24,4 @@ class Exception extends VegasException
      * Exception default message
      */
     protected $message = 'Social exception';
-
-    /**
-     * @param string $message
-     * @param int $code
-     */
-    public function __construct($message, $code)
-    {
-        $this->message = $this->message.': '.$message.' ['.$code.']';
-    }
 }

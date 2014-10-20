@@ -103,7 +103,7 @@ class Publish extends Service implements PublishInterface
     public function setLink($url)
     {
         if (!is_string($url) || !PublishHelper::validateLink($url)) {
-            throw new \Vegas\Social\Exception("setLink - url is not valid", 'SEL1');
+            throw new \Vegas\Social\Exception("setLink - url is not valid");
         }
 
         $this->postParams['content']['submitted-url'] = $url;
@@ -119,11 +119,11 @@ class Publish extends Service implements PublishInterface
     public function setPhoto($url)
     {
         if (!is_string($url)) {
-            throw new \Vegas\Social\Exception("setPhoto - argument is not a string", 'SEL2');
+            throw new \Vegas\Social\Exception("setPhoto - argument is not a string");
         }
 
         if (!PublishHelper::validateLink($url)) {
-            throw new \Vegas\Social\Exception("setPhoto - url is not valid" . $url, 'SEL3');
+            throw new \Vegas\Social\Exception("setPhoto - url is not valid" . $url);
         }
 
         $this->postParams['content']['submitted-image-url'] = $url;
@@ -148,7 +148,7 @@ class Publish extends Service implements PublishInterface
     {
         //check required params
         if (!isset($postParams['content']) || !isset($postParams['content']['title']) || !isset($postParams['content']['submitted-url'])) {
-            throw new \Vegas\Social\Exception("LinkedIn error", "setPostParams - required params content/title or content/submitted-url are not set");
+            throw new \Vegas\Social\Exception("setPostParams - required params content/title or content/submitted-url are not set");
         } else $this->setLink($postParams['content']['submitted-url']);
 
         $this->postParams = $postParams;

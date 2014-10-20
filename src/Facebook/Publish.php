@@ -56,7 +56,7 @@ class Publish extends Service implements PublishInterface
     }
 
     /**
-     * @throws \Vegas\Social\Exception
+     * @throws \Vegas\Social\Exception\InvalidPostParamsException
      */
     public function setDefaultPostParams()
     {
@@ -67,9 +67,9 @@ class Publish extends Service implements PublishInterface
             $this->postParams = array(
                 'access_token' => $userToken,
                 'name' => $userName,
-                'link' => 'http://testdomain.com/',
-                'caption' => 'Test caption',
-                'message' => 'Test message',
+                'link' => '',
+                'caption' => '',
+                'message' => '',
             );
 
             $this->publishArea = 'feed';
@@ -77,7 +77,7 @@ class Publish extends Service implements PublishInterface
 
             return $this;
         }
-        throw new \Vegas\Social\Exception('postParams error', 'SEF4');
+        throw new \Vegas\Social\Exception\InvalidPostParamsException('postParams');
     }
 
     /**
@@ -102,7 +102,7 @@ class Publish extends Service implements PublishInterface
 
     /**
      * @param $string
-     * @throws \Vegas\Social\Exception
+     * @throws \Vegas\Social\Exception\InvalidLinkException
      */
     public function setLink($string)
     {
@@ -110,7 +110,7 @@ class Publish extends Service implements PublishInterface
             $this->postParams['link'] = $string;
             return $this;
         }
-        throw new \Vegas\Social\Exception('not valid link', 'SEF5');
+        throw new \Vegas\Social\Exception\InvalidLinkException($string);
     }
 
     /**
@@ -131,7 +131,7 @@ class Publish extends Service implements PublishInterface
         } else if (gettype($photo) == 'string' && PublishHelper::validateLink($photo)) {
             $this->postParams['url'] = $photo;
         } else {
-            throw new \Vegas\Social\Exception('not valid argument in setPhoto', 'SEF6');
+            throw new \Vegas\Social\Exception('not valid argument in setPhoto');
         }
 
         return $this;
@@ -147,18 +147,18 @@ class Publish extends Service implements PublishInterface
 
     /**
      * @param $array
-     * @throws \Vegas\Social\Exception
+     * @return $this
+     * @throws \Vegas\Social\Exception\InvalidLinkException
+     * @throws \Vegas\Social\Exception\InvalidPostParamsException
      */
     public function setPostParams($array)
     {
-        if (isset($array['url'])
-            && (PublishHelper::validateLink($array['url'])
-                && isset($array['message']))
-        ) {
-            $this->postParams = $array;
-            return $this;
-        }
-        throw new \Vegas\Social\Exception('not valid post params', 'SEF7');
+        if (!isset($array['url'])) throw new \Vegas\Social\Exception\InvalidPostParamsException('url');
+        if (!PublishHelper::validateLink($array['url'])) throw new \Vegas\Social\Exception\InvalidLinkException($array['url']);
+        if (!isset($array['message'])) throw new \Vegas\Social\Exception\InvalidPostParamsException('message');
+
+        $this->postParams = $array;
+        return $this;
     }
 
     /**
@@ -167,12 +167,14 @@ class Publish extends Service implements PublishInterface
      */
     public function post()
     {
+        $this->checkPostParams();
+
         $postId = false;
 
         try {
             $postId = $this->request('POST', '/' . $this->targetUser . '/' . $this->publishArea, $this->postParams)->getGraphObject()->getProperty('id');
         } catch (FacebookRequestException $e) {
-            throw new \Vegas\Social\Exception('GraphObject exception', 'SEF8');
+            throw new \Vegas\Social\Exception('GraphObject exception');
         }
 
         return $postId;
@@ -188,10 +190,23 @@ class Publish extends Service implements PublishInterface
         try {
             $this->request('DELETE', '/' . $postId);
         } catch (FacebookRequestException $e) {
-            throw new \Vegas\Social\Exception('Could not delete post.', 'SEF9');
+            throw new \Vegas\Social\Exception('Could not delete post.');
         }
 
         return $postId;
+    }
+
+    /**
+     * @throws \Vegas\Social\Exception\InvalidPostParamsException
+     */
+    private function checkPostParams()
+    {
+        $requiredParams = array();
+        if ($this->publishArea == 'feed') $requiredParams = array('link', 'caption', 'message');
+
+        foreach ($requiredParams as $param) {
+            if ($this->postParams[$param] == '') throw new \Vegas\Social\Exception\InvalidPostParamsException($param);
+        }
     }
 }
 

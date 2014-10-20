@@ -25,7 +25,7 @@ class PublishTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(true, $facebook->validateUser($user_id));
 
         //PUBLISHING ON WALL
-        $post_id = $facebook->post();
+        $post_id = $facebook->setMessage("Testing, testing..." . rand())->setTitle("Testing, testing..." . rand())->setLink("http://amsterdamstandard.com/")->post();
         //test post ID
         $this->assertEquals(true, gettype($post_id) == 'string');
 
@@ -87,7 +87,7 @@ class PublishTest extends \PHPUnit_Framework_TestCase
             $facebook->setLink('1234');
             throw new \Exception('Not this exception.');
         } catch (\Exception $ex) {
-            $this->assertInstanceOf('\Vegas\Social\Exception', $ex);
+            $this->assertInstanceOf('\Vegas\Social\Exception\InvalidLinkException', $ex);
         }
 
         //POST PHOTO that does not exist - EXCEPTION TEST
@@ -104,7 +104,7 @@ class PublishTest extends \PHPUnit_Framework_TestCase
             $facebook->setPostParams(array('fake' => 'fake'));
             throw new \Exception('Not this exception.');
         } catch (\Exception $ex) {
-            $this->assertInstanceOf('\Vegas\Social\Exception', $ex);
+            $this->assertInstanceOf('\Vegas\Social\Exception\InvalidPostParamsException', $ex);
         }
     }
 }

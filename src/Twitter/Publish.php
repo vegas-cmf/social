@@ -112,7 +112,7 @@ class Publish extends Service implements PublishInterface
     public function setLink($url)
     {
         if (!is_string($url) || !PublishHelper::validateLink($url)) {
-            throw new \Vegas\Social\Exception("setLink - url is not valid", 'SET1');
+            throw new \Vegas\Social\Exception("setLink - url is not valid");
         }
 
         $this->postLink = $url;
@@ -155,7 +155,7 @@ class Publish extends Service implements PublishInterface
             $curl_file = curl_file_create($this->tmpFile, $file_type, $this->postMessage);
             $this->postParams['params']['media[]'] = $curl_file;
         } else {
-            throw new \Vegas\Social\Exception('not valid argument in setPhoto', 'SET2');
+            throw new \Vegas\Social\Exception('not valid argument in setPhoto');
         }
 
         $this->postParams['url'] = $this->url("1.1/statuses/update_with_media");
@@ -179,8 +179,8 @@ class Publish extends Service implements PublishInterface
      */
     public function setPostParams($array)
     {
-        if (!isset($array['method']) || $array['method'] != 'POST') throw new \Vegas\Social\Exception('method is wrong or ot set', 'SET3');
-        if (!isset($array['params']['status'])) throw new \Vegas\Social\Exception('params.status is not set', 'SET4');
+        if (!isset($array['method']) || $array['method'] != 'POST') throw new \Vegas\Social\Exception('method is wrong or ot set');
+        if (!isset($array['params']['status'])) throw new \Vegas\Social\Exception('params.status is not set');
 
         $this->postParams = $array;
         return $this;
@@ -195,7 +195,7 @@ class Publish extends Service implements PublishInterface
         $code = $this->user_request($this->postParams);
 
         if ($code != 200) {
-            throw new \Vegas\Social\Exception("Error: " . $code, 'SET5');
+            throw new \Vegas\Social\Exception("Error: " . $code);
         }
 
         $response = json_decode($this->response['response'], true);
@@ -221,7 +221,7 @@ class Publish extends Service implements PublishInterface
                 return $response['id'];
             }
         } catch (\Exception $ex) {
-            throw new \Vegas\Social\Exception(var_export($ex, true), 'SET6');
+            throw new \Vegas\Social\Exception(var_export($ex, true));
         }
     }
 

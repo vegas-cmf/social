@@ -55,7 +55,7 @@ class Service extends tmhOAuth
         if ($code == 200) {
             return json_decode($this->response['response']);
         } else {
-            throw new \Vegas\Social\Exception("Error: " . $code . " " . $this->response['errors'], 'SET0');
+            throw new \Vegas\Social\Exception("Error: " . $code . " " . $this->response['errors']);
         }
     }
 }
