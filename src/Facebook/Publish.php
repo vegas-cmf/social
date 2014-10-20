@@ -77,7 +77,7 @@ class Publish extends Service implements PublishInterface
 
             return $this;
         }
-        throw new \Vegas\Social\Exception('SE4', 'postParams error');
+        throw new \Vegas\Social\Exception('postParams error', 'SEF4');
     }
 
     /**
@@ -110,7 +110,7 @@ class Publish extends Service implements PublishInterface
             $this->postParams['link'] = $string;
             return $this;
         }
-        throw new \Vegas\Social\Exception('SE3', 'not valid link');
+        throw new \Vegas\Social\Exception('not valid link', 'SEF5');
     }
 
     /**
@@ -131,7 +131,7 @@ class Publish extends Service implements PublishInterface
         } else if (gettype($photo) == 'string' && PublishHelper::validateLink($photo)) {
             $this->postParams['url'] = $photo;
         } else {
-            throw new \Vegas\Social\Exception('SE3', 'not valid argument in setPhoto');
+            throw new \Vegas\Social\Exception('not valid argument in setPhoto', 'SEF6');
         }
 
         return $this;
@@ -158,7 +158,7 @@ class Publish extends Service implements PublishInterface
             $this->postParams = $array;
             return $this;
         }
-        throw new \Vegas\Social\Exception('SE9', 'not valid post params');
+        throw new \Vegas\Social\Exception('not valid post params', 'SEF7');
     }
 
     /**
@@ -172,7 +172,7 @@ class Publish extends Service implements PublishInterface
         try {
             $postId = $this->request('POST', '/' . $this->targetUser . '/' . $this->publishArea, $this->postParams)->getGraphObject()->getProperty('id');
         } catch (FacebookRequestException $e) {
-            throw new \Vegas\Social\Exception('SE7', 'GraphObject exception');
+            throw new \Vegas\Social\Exception('GraphObject exception', 'SEF8');
         }
 
         return $postId;
@@ -188,7 +188,7 @@ class Publish extends Service implements PublishInterface
         try {
             $this->request('DELETE', '/' . $postId);
         } catch (FacebookRequestException $e) {
-            throw new \Vegas\Social\Exception('SE6', 'Could not delete post.');
+            throw new \Vegas\Social\Exception('Could not delete post.', 'SEF9');
         }
 
         return $postId;

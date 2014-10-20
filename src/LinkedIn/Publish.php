@@ -28,6 +28,14 @@ class Publish extends Service implements PublishInterface
 
     /**
      * @param $config
+     *
+     * param example:
+     *
+     * private $config = array(
+     *   'app_key' => '77c863ytgelytp',
+     *   'app_secret' => 'CHHUveJYMda6FzfH',
+     *   'access_token' => 'AQW8quBxpTEJxPsKpb0MzKyrAooElYTsJQ4aH3w8c-OUZmd9kkUWsnJbEZrWYrupRinIvFUSUZhTWmqVb30IXC6bRV1Vx0kJzDK0K2ssWF1c-9MmAn8tG4O7FAA2sZGUdsVl1b6EpjRibboaO4C1E8mdmhTCtKDS2C0jVrI1stOiCdxmEMg'
+     * );
      */
     public function __construct($config)
     {
@@ -51,11 +59,11 @@ class Publish extends Service implements PublishInterface
     public function setDefaultPostParams()
     {
         $post = array(
-            'comment' => 'Test message' . rand(),
+            'comment' => 'Message ' . rand(),
             'content' => array(
-                'title' => 'Test' . rand(),
-                'description' => 'Linkedin',
-                'submitted-url' => 'http://testdomain.com?q=' . rand()
+                'title' => 'Title ' . rand(),
+                'description' => '',
+                'submitted-url' => 'http://www.linkedin.com?q=' . rand()
             ),
             'visibility' => array('code' => 'anyone')
         );
@@ -95,7 +103,7 @@ class Publish extends Service implements PublishInterface
     public function setLink($url)
     {
         if (!is_string($url) || !PublishHelper::validateLink($url)) {
-            throw new \Vegas\Social\Exception("LinkedIn error", "setLink - url is not valid");
+            throw new \Vegas\Social\Exception("setLink - url is not valid", 'SEL1');
         }
 
         $this->postParams['content']['submitted-url'] = $url;
@@ -111,11 +119,11 @@ class Publish extends Service implements PublishInterface
     public function setPhoto($url)
     {
         if (!is_string($url)) {
-            throw new \Vegas\Social\Exception("LinkedIn error", "setPhoto - argument is not a string");
+            throw new \Vegas\Social\Exception("setPhoto - argument is not a string", 'SEL2');
         }
 
         if (!PublishHelper::validateLink($url)) {
-            throw new \Vegas\Social\Exception("LinkedIn error", "setPhoto - url is not valid" . $url);
+            throw new \Vegas\Social\Exception("setPhoto - url is not valid" . $url, 'SEL3');
         }
 
         $this->postParams['content']['submitted-image-url'] = $url;
@@ -147,10 +155,4 @@ class Publish extends Service implements PublishInterface
 
         return $this;
     }
-
-    /*public function deletePost($post_id)
-    {
-        //2014.10.14 deleting shares is not supported in LinkedIn Share API
-        return false;
-    }*/
 }

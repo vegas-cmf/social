@@ -73,7 +73,7 @@ class Service
         }
 
         $this->fbSession = false;
-        throw new \Vegas\Social\Exception("SE0", "could not set Facebook session");
+        throw new \Vegas\Social\Exception("could not set Facebook session", "SEF0");
     }
 
     /**
@@ -102,7 +102,7 @@ class Service
                 throw new \Vegas\Social\Exception($e->getCode(), $e->getMessage());
             }
         } else {
-            throw new \Vegas\Social\Exception('SE1', 'Not valid session!');
+            throw new \Vegas\Social\Exception('Not valid session!', 'SEF1');
         }
 
         return $response;
@@ -119,8 +119,7 @@ class Service
         if (is_array($this->fbScope)) {
             foreach ($requiredPermissions as $permission) {
                 if (!in_array($permission, $this->fbScope)) {
-                    throw new \Vegas\Social\Exception("SE10", "Required facebook permission " . $permission
-                        . " was not granted for this app!");
+                    throw new \Vegas\Social\Exception("Required facebook permission " . $permission . " was not granted for this app!", 'SEF2');
                 }
             }
         }
@@ -138,7 +137,7 @@ class Service
         try {
             $user_profile = $this->request('GET', '/' . $userId)->getGraphObject(GraphUser::className());
         } catch (FacebookRequestException $e) {
-            throw new \Vegas\Social\Exception('SE7', 'GraphObject exception');
+            throw new \Vegas\Social\Exception('GraphObject exception', 'SEF3');
         }
 
         return $user_profile;

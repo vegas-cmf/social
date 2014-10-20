@@ -1,9 +1,13 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: tborodziuk
- * Date: 01.10.14
- * Time: 13:30
+ * This file is part of Vegas package
+ *
+ * @author Tomasz Borodziuk <tomasz.borodziuk@amsterdam-standard.pl>
+ * @copyright Amsterdam Standard Sp. Z o.o.
+ * @homepage http://vegas-cmf.github.io
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace Vegas\Social\Twitter;
@@ -11,23 +15,58 @@ namespace Vegas\Social\Twitter;
 use Vegas\Social\PublishHelper;
 use Vegas\Social\PublishInterface;
 
+/**
+ * Class Publish
+ * @package Vegas\Social\Twitter
+ */
 class Publish extends Service implements PublishInterface
 {
-    private $post_params;
-    private $post_title = '';
-    private $post_message = '';
-    private $post_link = '';
-    private $tmp_file = '';
+    /**
+     * @var array
+     */
+    private $postParams;
+    /**
+     * @var string
+     */
+    private $postTitle = '';
+    /**
+     * @var string
+     */
+    private $postMessage = '';
+    /**
+     * @var string
+     */
+    private $postLink = '';
+    /**
+     * @var string
+     */
+    private $tmpFile = '';
 
+    /**
+     * @param array $config
+     *
+     * param example:
+     *
+     * $config = array(
+     *   'consumer_key' => 'XXX9dOKA3Nga2VskRPcAWWIqr',
+     *   'consumer_secret' => 'XXXIYIqpGfDnM03EFOBkkD26QT3xMIzwqOTwXFyAYZzP44ZFmK',
+     *   'token' => '2831990805-dCAoGfdhYEX60GAG7xsOdIblMdfVerdfF9OoEv8',
+     *   'secret' => '5WoQo1JtO8H61cOUvVPQbs6tTXZSTVB2ukGTou7yXkZOx',
+     * );
+     *
+     */
     public function __construct($config)
     {
         parent::__construct($config);
         $this->setDefaultPostParams();
     }
 
+    /**
+     * @return $this
+     */
     public function setDefaultPostParams()
     {
-        $this->post_params = array(
+        $this->postParams = array(
             'method' => 'POST',
             'url' => $this->url("1.1/statuses/update"),
             'params' => array(
@@ -35,90 +74,123 @@ class Publish extends Service implements PublishInterface
             )
         );
 
-        $this->setTitle('Test Tweet ' . rand());
-        $this->setMessage('Test, test, test, test... ' . rand());
+        $this->setTitle('Title ' . rand());
+        $this->setMessage('Message ' . rand());
 
         return $this;
     }
 
+    /**
+     * @param $string
+     * @return $this
+     */
     public function setTitle($string)
     {
-        $this->post_title = $string;
+        $this->postTitle = $string;
         $this->updateStatus();
 
         return $this;
     }
 
+    /**
+     * @param $string
+     * @return $this
+     */
     public function setMessage($string)
     {
-        $this->post_message = $string;
+        $this->postMessage = $string;
         $this->updateStatus();
 
         return $this;
     }
 
+    /**
+     * @param $url
+     * @return $this
+     * @throws \Vegas\Social\Exception
+     */
     public function setLink($url)
     {
         if (!is_string($url) || !PublishHelper::validateLink($url)) {
-            throw new \Vegas\Social\Exception("Twitter error", "setLink - url is not valid");
+            throw new \Vegas\Social\Exception("setLink - url is not valid", 'SET1');
         }
 
-        $this->post_link = $url;
+        $this->postLink = $url;
         $this->updateStatus();
 
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     private function updateStatus()
     {
-        if ($this->post_title != '') $this->post_params['params']['status'] = $this->post_title . "\n\n" . $this->post_message;
-        else $this->post_params['params']['status'] = $this->post_message;
+        if ($this->postTitle != '') $this->postParams['params']['status'] = $this->postTitle . "\n\n" . $this->postMessage;
+        else $this->postParams['params']['status'] = $this->postMessage;
 
-        if ($this->post_link != '') $this->post_params['params']['status'] = $this->post_params['params']['status'] . "\n" . $this->post_link;
+        if ($this->postLink != '') $this->postParams['params']['status'] = $this->postParams['params']['status'] . "\n" . $this->postLink;
 
         return $this;
     }
 
+    /**
+     * @param $photo
+     * @return $this
+     * @throws \Vegas\Social\Exception
+     */
     public function setPhoto($photo)
     {
         if (gettype($photo) == 'object' && get_class($photo) == 'CURLFile') {
-            $this->post_params['params']['media[]'] = $photo;
+            $this->postParams['params']['media[]'] = $photo;
         } else if (gettype($photo) == 'string' && PublishHelper::validateLink($photo)) {
-            $this->tmp_file = './image_tmp' . time();
-            file_put_contents($this->tmp_file, file_get_contents($photo));
-            $file_type = image_type_to_mime_type(exif_imagetype($this->tmp_file));
-            $curl_file = curl_file_create($this->tmp_file, $file_type, $this->post_message);
-            $this->post_params['params']['media[]'] = $curl_file;
+            $this->tmpFile = './image_tmp' . time();
+            file_put_contents($this->tmpFile, file_get_contents($photo));
+            $file_type = image_type_to_mime_type(exif_imagetype($this->tmpFile));
+            $curl_file = curl_file_create($this->tmpFile, $file_type, $this->postMessage);
+            $this->postParams['params']['media[]'] = $curl_file;
         } else {
-            throw new \Vegas\Social\Exception('Twitter error: ', 'not valid argument in setPhoto');
+            throw new \Vegas\Social\Exception('not valid argument in setPhoto', 'SET2');
         }
 
-        $this->post_params['url'] = $this->url("1.1/statuses/update_with_media");
-        $this->post_params['multipart'] = true;
+        $this->postParams['url'] = $this->url("1.1/statuses/update_with_media");
+        $this->postParams['multipart'] = true;
 
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
     public function getPostParams()
     {
-        return $this->post_params;
+        return $this->postParams;
     }
 
+    /**
+     * @param $array
+     * @return $this
+     * @throws \Vegas\Social\Exception
+     */
     public function setPostParams($array)
     {
-        if (!isset($array['method']) || $array['method'] != 'POST') throw new \Vegas\Social\Exception("Twitter error: ", 'method is wrong or ot set');
-        if (!isset($array['params']['status'])) throw new \Vegas\Social\Exception("Twitter error: ", 'params.status is not set');
+        if (!isset($array['method']) || $array['method'] != 'POST') throw new \Vegas\Social\Exception('method is wrong or ot set', 'SET3');
+        if (!isset($array['params']['status'])) throw new \Vegas\Social\Exception('params.status is not set', 'SET4');
 
-        $this->post_params = $array;
+        $this->postParams = $array;
         return $this;
     }
 
+    /**
+     * @return mixed
+     * @throws \Vegas\Social\Exception
+     */
     public function post()
     {
-        $code = $this->user_request($this->post_params);
+        $code = $this->user_request($this->postParams);
 
         if ($code != 200) {
-            throw new \Vegas\Social\Exception("Twitter error: " . $code, '');
+            throw new \Vegas\Social\Exception("Error: " . $code, 'SET5');
         }
 
         $response = json_decode($this->response['response'], true);
@@ -126,6 +198,10 @@ class Publish extends Service implements PublishInterface
         return $response['id'];
     }
 
+    /**
+     * @param $id
+     * @throws \Vegas\Social\Exception
+     */
     public function deletePost($id)
     {
         try {
@@ -140,14 +216,17 @@ class Publish extends Service implements PublishInterface
                 return $response['id'];
             }
         } catch (\Exception $ex) {
-            throw new \Vegas\Social\Exception("Twitter error: ", var_export($ex, true));
+            throw new \Vegas\Social\Exception(var_export($ex, true), 'SET6');
         }
     }
 
+    /**
+     *
+     */
     public function __destruct()
     {
-        if ($this->tmp_file != '') unlink($this->tmp_file);
-        $this->tmp_file = '';
+        if ($this->tmpFile != '') unlink($this->tmpFile);
+        $this->tmpFile = '';
     }
 }
 

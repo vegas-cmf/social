@@ -30,6 +30,15 @@ class Service
 
     /**
      * @param $config
+     *
+     * param example:
+     *
+     * private $config = array(
+     *   'app_key' => '77c863ytgelytp',
+     *   'app_secret' => 'CHHUveJYMda6FzfH',
+     *   'access_token' => 'AQW8quBxpTEJxPsKpb0MzKyrAooElYTsJQ4aH3w8c-OUZmd9kkUWsnJbEZrWYrupRinIvFUSUZhTWmqVb30IXC6bRV1Vx0kJzDK0K2ssWF1c-9MmAn8tG4O7FAA2sZGUdsVl1b6EpjRibboaO4C1E8mdmhTCtKDS2C0jVrI1stOiCdxmEMg'
+     * );
+     *
      */
     public function __construct($config)
     {
