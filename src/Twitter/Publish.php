@@ -126,10 +126,15 @@ class Publish extends Service implements PublishInterface
      */
     private function updateStatus()
     {
-        if ($this->postTitle != '') $this->postParams['params']['status'] = $this->postTitle . "\n\n" . $this->postMessage;
-        else $this->postParams['params']['status'] = $this->postMessage;
+        if ($this->postTitle != '') {
+            $this->postParams['params']['status'] = $this->postTitle . "\n\n" . $this->postMessage;
+        } else {
+            $this->postParams['params']['status'] = $this->postMessage;
+        }
 
-        if ($this->postLink != '') $this->postParams['params']['status'] = $this->postParams['params']['status'] . "\n" . $this->postLink;
+        if ($this->postLink != '') {
+            $this->postParams['params']['status'] = $this->postParams['params']['status'] . "\n" . $this->postLink;
+        }
 
         return $this;
     }
@@ -225,7 +230,9 @@ class Publish extends Service implements PublishInterface
      */
     public function __destruct()
     {
-        if ($this->tmpFile != '') unlink($this->tmpFile);
+        if ($this->tmpFile != '' && file_exists($this->tmpFile)) {
+            unlink($this->tmpFile);
+        }
         $this->tmpFile = '';
     }
 }
