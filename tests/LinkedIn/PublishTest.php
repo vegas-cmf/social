@@ -21,7 +21,7 @@ class PublishTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(true, is_string($user['firstName']));
 
 
-        $post_confirmation = $linkedIn->post();
+        $post_confirmation = $linkedIn->setTitle('Test title' . rand())->setMessage('Test picture' . rand())->setLink('https://github.com/vegas-cmf')->post();
         $this->assertEquals(2, count($post_confirmation));
         //var_dump($post_confirmation);
 

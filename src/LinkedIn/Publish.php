@@ -48,6 +48,7 @@ class Publish extends Service implements PublishInterface
      */
     public function post()
     {
+        $this->checkParams($this->postParams);
         $extra_headers = array('Content-type' => 'application/json');
         $result = json_decode($this->service->request('/people/~/shares?format=json', 'POST', json_encode($this->postParams), $extra_headers), true);
         return $result;
@@ -59,11 +60,11 @@ class Publish extends Service implements PublishInterface
     public function setDefaultPostParams()
     {
         $post = array(
-            'comment' => 'Message ' . rand(),
+            'comment' => '',
             'content' => array(
-                'title' => 'Title ' . rand(),
+                'title' => '',
                 'description' => '',
-                'submitted-url' => 'http://www.linkedin.com?q=' . rand()
+                'submitted-url' => ''
             ),
             'visibility' => array('code' => 'anyone')
         );
@@ -150,14 +151,19 @@ class Publish extends Service implements PublishInterface
      */
     public function setPostParams($postParams)
     {
+        $this->checkParams($postParams);
+        $this->postParams = $postParams;
+
+        return $this;
+    }
+
+    private function checkParams($postParams)
+    {
         //check required params
         if (!isset($postParams['content'])) throw new \Vegas\Social\Exception\InvalidPostParamsException('content');
         if (!isset($postParams['content']['title'])) throw new \Vegas\Social\Exception\InvalidPostParamsException('content.title');
         if (!isset($postParams['content']['submitted-url'])) throw new \Vegas\Social\Exception\InvalidPostParamsException('content.submitted-url');
 
         $this->setLink($postParams['content']['submitted-url']);
-        $this->postParams = $postParams;
-
-        return $this;
     }
 }
