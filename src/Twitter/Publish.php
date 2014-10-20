@@ -74,8 +74,8 @@ class Publish extends Service implements PublishInterface
             )
         );
 
-        $this->setTitle('Title ' . rand());
-        $this->setMessage('Message ' . rand());
+        $this->setTitle('');
+        $this->setMessage('');
 
         return $this;
     }
@@ -179,8 +179,7 @@ class Publish extends Service implements PublishInterface
      */
     public function setPostParams($array)
     {
-        if (!isset($array['method']) || $array['method'] != 'POST') throw new \Vegas\Social\Exception('method is wrong or ot set');
-        if (!isset($array['params']['status'])) throw new \Vegas\Social\Exception('params.status is not set');
+        $this->checkParams($array);
 
         $this->postParams = $array;
         return $this;
@@ -192,6 +191,7 @@ class Publish extends Service implements PublishInterface
      */
     public function post()
     {
+        $this->checkParams($this->postParams);
         $code = $this->user_request($this->postParams);
 
         if ($code != 200) {
@@ -234,6 +234,16 @@ class Publish extends Service implements PublishInterface
             unlink($this->tmpFile);
         }
         $this->tmpFile = '';
+    }
+
+    /**
+     * @param $array
+     * @throws \Vegas\Social\Exception\InvalidPostParamsException
+     */
+    private function checkParams($array)
+    {
+        if (!isset($array['method']) || $array['method'] != 'POST') throw new \Vegas\Social\Exception\InvalidPostParamsException('method');
+        if (!isset($array['params']['status'])) throw new \Vegas\Social\Exception\InvalidPostParamsException('params.status');
     }
 }
 
