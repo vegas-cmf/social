@@ -69,7 +69,7 @@ class PublishTest extends \PHPUnit_Framework_TestCase
             $publishObject->setPhoto('1234');
             throw new \Exception('Not this exception.');
         } catch (\Exception $ex) {
-            $this->assertInstanceOf('\Vegas\Social\Exception', $ex);
+            $this->assertInstanceOf('\Vegas\Social\Exception\InvalidArgumentException', $ex);
         }
 
         //SET LINK - EXCEPTION TEST
@@ -77,7 +77,7 @@ class PublishTest extends \PHPUnit_Framework_TestCase
             $publishObject->setLink('1234');
             throw new \Exception('Not this exception.');
         } catch (\Exception $ex) {
-            $this->assertInstanceOf('\Vegas\Social\Exception', $ex);
+            $this->assertInstanceOf('\Vegas\Social\Exception\InvalidLinkException', $ex);
         }
 
         //POST PHOTO that does not exist - EXCEPTION TEST
@@ -94,7 +94,7 @@ class PublishTest extends \PHPUnit_Framework_TestCase
             $publishObject->setPostParams(array('fake' => 'fake'));
             throw new \Exception('Not this exception.');
         } catch (\Exception $ex) {
-            $this->assertInstanceOf('\Vegas\Social\Exception', $ex);
+            $this->assertInstanceOf('\Vegas\Social\Exception\InvalidPostParamsException', $ex);
         }
     }
 }

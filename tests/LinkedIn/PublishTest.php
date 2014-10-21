@@ -42,10 +42,18 @@ class PublishTest extends \PHPUnit_Framework_TestCase
 
         //SET PHOTO - EXCEPTION TEST
         try {
+            $publishObject->setPhoto(array('fake' => 'fake'));
+            throw new \Exception('Not this exception.');
+        } catch (\Exception $ex) {
+            $this->assertInstanceOf('\Vegas\Social\Exception\InvalidArgumentException', $ex);
+        }
+
+        //SET PHOTO - EXCEPTION2 TEST
+        try {
             $publishObject->setPhoto('1234');
             throw new \Exception('Not this exception.');
         } catch (\Exception $ex) {
-            $this->assertInstanceOf('\Vegas\Social\Exception', $ex);
+            $this->assertInstanceOf('\Vegas\Social\Exception\InvalidLinkException', $ex);
         }
 
         //SET LINK - EXCEPTION TEST

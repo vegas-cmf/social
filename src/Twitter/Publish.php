@@ -112,7 +112,7 @@ class Publish extends Service implements PublishInterface
     public function setLink($url)
     {
         if (!is_string($url) || !PublishHelper::validateLink($url)) {
-            throw new \Vegas\Social\Exception("setLink - url is not valid");
+            throw new \Vegas\Social\Exception\InvalidLinkException($url);
         }
 
         $this->postLink = $url;
@@ -155,7 +155,7 @@ class Publish extends Service implements PublishInterface
             $curl_file = curl_file_create($this->tmpFile, $file_type, $this->postMessage);
             $this->postParams['params']['media[]'] = $curl_file;
         } else {
-            throw new \Vegas\Social\Exception('not valid argument in setPhoto');
+            throw new \Vegas\Social\Exception\InvalidArgumentException('setPhoto');
         }
 
         $this->postParams['url'] = $this->url("1.1/statuses/update_with_media");
