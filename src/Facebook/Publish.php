@@ -174,7 +174,7 @@ class Publish extends Service implements PublishInterface
         try {
             $postId = $this->request('POST', '/' . $this->targetUser . '/' . $this->publishArea, $this->postParams)->getGraphObject()->getProperty('id');
         } catch (FacebookRequestException $e) {
-            throw new \Vegas\Social\Exception('GraphObject exception');
+            throw new \Vegas\Social\Exception\UnexpectedResponseException($e);
         }
 
         return $postId;
@@ -190,7 +190,7 @@ class Publish extends Service implements PublishInterface
         try {
             $this->request('DELETE', '/' . $postId);
         } catch (FacebookRequestException $e) {
-            throw new \Vegas\Social\Exception('Could not delete post.');
+            throw new \Vegas\Social\Exception\UnexpectedResponseException($e);
         }
 
         return $postId;

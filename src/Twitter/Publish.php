@@ -142,7 +142,7 @@ class Publish extends Service implements PublishInterface
     /**
      * @param $photo
      * @return $this
-     * @throws \Vegas\Social\Exception
+     * @throws \Vegas\Social\Exception\InvalidArgumentException
      */
     public function setPhoto($photo)
     {
@@ -165,7 +165,7 @@ class Publish extends Service implements PublishInterface
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getPostParams()
     {
@@ -175,7 +175,7 @@ class Publish extends Service implements PublishInterface
     /**
      * @param $array
      * @return $this
-     * @throws \Vegas\Social\Exception
+     * @throws \Vegas\Social\Exception\InvalidPostParamsException
      */
     public function setPostParams($array)
     {
@@ -185,9 +185,11 @@ class Publish extends Service implements PublishInterface
         return $this;
     }
 
+
     /**
      * @return mixed
      * @throws \Vegas\Social\Exception
+     * @throws \Vegas\Social\Exception\InvalidPostParamsException
      */
     public function post()
     {
@@ -205,7 +207,7 @@ class Publish extends Service implements PublishInterface
 
     /**
      * @param $id
-     * @throws \Vegas\Social\Exception
+     * @throws \Vegas\Social\Exception\UnexpectedResponseException
      */
     public function deletePost($id)
     {
@@ -221,7 +223,7 @@ class Publish extends Service implements PublishInterface
                 return $response['id'];
             }
         } catch (\Exception $ex) {
-            throw new \Vegas\Social\Exception(var_export($ex, true));
+            throw new \Vegas\Social\Exception\UnexpectedResponseException($ex);
         }
     }
 

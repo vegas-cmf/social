@@ -44,7 +44,7 @@ class Service extends tmhOAuth
     }
 
     /**
-     * @throws \Vegas\Social\Exception
+     * @throws \Vegas\Social\UnexpectedResponseException
      */
     public function verifyCredentials()
     {
@@ -55,7 +55,7 @@ class Service extends tmhOAuth
         if ($code == 200) {
             return json_decode($this->response['response']);
         } else {
-            throw new \Vegas\Social\Exception("Error: " . $code . " " . $this->response['errors']);
+            throw new \Vegas\Social\UnexpectedResponseException($this->response['errors']);
         }
     }
 }

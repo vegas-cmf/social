@@ -157,6 +157,11 @@ class Publish extends Service implements PublishInterface
         return $this;
     }
 
+    /**
+     * @param $postParams
+     * @throws \Vegas\Social\Exception\InvalidLinkException
+     * @throws \Vegas\Social\Exception\InvalidPostParamsException
+     */
     private function checkParams($postParams)
     {
         //check required params
