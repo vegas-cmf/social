@@ -31,11 +31,12 @@ class Service extends tmhOAuth
      * param example:
      *
      * $config = array(
-     *   'consumer_key' => 'XXX9dOKA3Nga2VskRPcAWWIqr',
-     *   'consumer_secret' => 'XXXIYIqpGfDnM03EFOBkkD26QT3xMIzwqOTwXFyAYZzP44ZFmK',
-     *   'token' => '2831990805-dCAoGfdhYEX60GAG7xsOdIblMdfVerdfF9OoEv8',
-     *   'secret' => '5WoQo1JtO8H61cOUvVPQbs6tTXZSTVB2ukGTou7yXkZOx',
+     *   'consumer_key' => 'CONSUMER KEY',
+     *   'consumer_secret' => 'CONSUMER SECRET',
+     *   'token' => 'TOKEN',
+     *   'secret' => 'SECRET',
      * );
+     *
      */
     public function __construct($config)
     {

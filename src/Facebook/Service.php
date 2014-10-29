@@ -41,9 +41,9 @@ class Service
      * param example:
      *
      * $config = array(
-     *  'app_key' => '704865089606542',
-     *  'app_secret' => '786207332b78fb7819d375d480c1c3cd',
-     *  'access_token' => 'CAAKBEjFH044BAIIz2eFnS2sVZA0prvVhUA99rPZC8nP32Xtw6T595YuoDXcjgszFSWPNXLzzvtD7sba6FqX373KoOxIbRZAZCP4ZBD8gBZB6jIRvVvLAsqApQLYMxugmQPYlRfxdWBZA3SIYzqBPflIOEvAhll7ybSfOJtK7c7SZCe9zZAui0DmSuLrtC5gjiUqsZD'
+     *  'app_key' => 'APP ID',
+     *  'app_secret' => 'APP SECRET',
+     *  'access_token' => 'USER TOKEN'
      * );
      *
      */
