@@ -4,11 +4,13 @@ php:
   - 5.4
 
 services:
+  - curl
   - mongodb
   - memcached
 
 before_install:
   - mysql -e "CREATE DATABASE IF NOT EXISTS vegas_test;" -uroot
+  - sudo apt-get install php5-curl
 
 before_script:
   - phpenv config-add travis/php.ini
