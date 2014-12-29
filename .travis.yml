@@ -13,6 +13,7 @@ before_install:
   - sudo apt-add-repository -y ppa:phalcon/stable
   - sudo apt-get update
   - sudo apt-get install -y mlocate php5-phalcon php5-curl
+  - sudo updatedb
 
 before_script:
   - phpenv config-add travis/php.ini
