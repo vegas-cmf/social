@@ -16,8 +16,9 @@ before_install:
 
 before_script:
   - phpenv config-add travis/php.ini
-  - found=`locate -ebl 1 '\curl.so'`; export PATH="${found/\/curl\.so/}:${PATH}"
-  - sudo service php5-fpm restart
+  - ln -s `locate -ebl 1 '\curl.so'` `php-config --extension-dir`/curl.so
+  - ln -s `locate -ebl 1 '\phalcon.so'` `php-config --extension-dir`/phalcon.so
+  - sudo -E service php5-fpm restart
   - curl -s http://getcomposer.org/installer | php
   - php composer.phar install --dev
 
