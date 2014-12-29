@@ -24,7 +24,7 @@ class Publish extends Service implements PublishInterface
     /**
      * @var array
      */
-    private $postParams = array();
+    private $postParams = [];
 
     /**
      * @var string, for example 'feed' or 'photos'
@@ -64,13 +64,13 @@ class Publish extends Service implements PublishInterface
         $userName = $this->getUserData()->getName();
 
         if ($userName) {
-            $this->postParams = array(
+            $this->postParams = [
                 'access_token' => $userToken,
                 'name' => $userName,
                 'link' => '',
                 'caption' => '',
                 'message' => '',
-            );
+            ];
 
             $this->publishArea = 'feed';
             $this->targetUser = 'me';
@@ -122,9 +122,9 @@ class Publish extends Service implements PublishInterface
     {
         $this->publishArea = 'photos';
         $message = $this->postParams['message'];
-        $this->postParams = array(
+        $this->postParams = [
             'message' => $message
-        );
+        ];
 
         if (gettype($photo) == 'object' && get_class($photo) == 'CURLFile') {
             $this->postParams['source'] = $photo;
@@ -201,13 +201,11 @@ class Publish extends Service implements PublishInterface
      */
     private function checkPostParams()
     {
-        $requiredParams = array();
-        if ($this->publishArea == 'feed') $requiredParams = array('link', 'caption', 'message');
+        $requiredParams = [];
+        if ($this->publishArea == 'feed') $requiredParams = ['link', 'caption', 'message'];
 
         foreach ($requiredParams as $param) {
             if ($this->postParams[$param] == '') throw new \Vegas\Social\Exception\InvalidPostParamsException($param);
         }
     }
 }
-
-?>

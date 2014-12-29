@@ -30,4 +30,4 @@ class InvalidLinkException extends \Vegas\Social\Exception
     {
         $this->message = sprintf($this->message, $link);
     }
-} 
+}

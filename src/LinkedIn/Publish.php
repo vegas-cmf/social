@@ -24,7 +24,7 @@ class Publish extends Service implements PublishInterface
     /**
      * @var array
      */
-    private $postParams = array();
+    private $postParams = [];
 
     /**
      * @param $config
@@ -50,7 +50,7 @@ class Publish extends Service implements PublishInterface
     public function post()
     {
         $this->checkParams($this->postParams);
-        $extra_headers = array('Content-type' => 'application/json');
+        $extra_headers = ['Content-type' => 'application/json'];
         $result = json_decode($this->service->request('/people/~/shares?format=json', 'POST', json_encode($this->postParams), $extra_headers), true);
         return $result;
     }
@@ -60,15 +60,15 @@ class Publish extends Service implements PublishInterface
      */
     public function setDefaultPostParams()
     {
-        $post = array(
+        $post = [
             'comment' => '',
-            'content' => array(
+            'content' => [
                 'title' => '',
                 'description' => '',
                 'submitted-url' => ''
-            ),
-            'visibility' => array('code' => 'anyone')
-        );
+            ],
+            'visibility' => ['code' => 'anyone']
+        ];
 
         $this->postParams = $post;
 

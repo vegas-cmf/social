@@ -66,13 +66,13 @@ class Publish extends Service implements PublishInterface
      */
     public function setDefaultPostParams()
     {
-        $this->postParams = array(
+        $this->postParams = [
             'method' => 'POST',
             'url' => $this->url("1.1/statuses/update"),
-            'params' => array(
+            'params' => [
                 'status' => ''
-            )
-        );
+            ]
+        ];
 
         $this->setTitle('');
         $this->setMessage('');
@@ -212,11 +212,11 @@ class Publish extends Service implements PublishInterface
     public function deletePost($id)
     {
         try {
-            $code = $this->user_request(array(
+            $code = $this->user_request([
                 'method' => 'POST',
                 'url' => $this->url("1.1/statuses/destroy/" . $id),
-                'params' => array()
-            ));
+                'params' => []
+            ]);
 
             if ($code == 200) {
                 $response = json_decode($this->response['response'], true);
@@ -248,5 +248,3 @@ class Publish extends Service implements PublishInterface
         if (!isset($array['params']['status'])) throw new \Vegas\Social\Exception\InvalidPostParamsException('params.status');
     }
 }
-
-?>

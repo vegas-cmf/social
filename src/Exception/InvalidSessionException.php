@@ -30,4 +30,4 @@ class InvalidSessionException extends \Vegas\Social\Exception
     {
         $this->message = sprintf($this->message);
     }
-} 
+}

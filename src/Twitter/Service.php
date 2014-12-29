@@ -23,7 +23,7 @@ class Service extends tmhOAuth
     /**
      * @var array|string
      */
-    protected $config = array();
+    protected $config = [];
 
     /**
      * @param array $config
@@ -49,10 +49,10 @@ class Service extends tmhOAuth
      */
     public function verifyCredentials()
     {
-        $code = $this->user_request(array(
+        $code = $this->user_request([
             'method' => 'GET',
             'url' => $this->url('1.1/account/verify_credentials')
-        ));
+        ]);
         if ($code == 200) {
             return json_decode($this->response['response']);
         } else {

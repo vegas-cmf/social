@@ -61,7 +61,7 @@ class Service
             $redirectUrl
         );
 
-        $this->service = $serviceFactory->createService('linkedin', $credentials, $storage, array('r_fullprofile', 'r_emailaddress', 'rw_nus'));
+        $this->service = $serviceFactory->createService('linkedin', $credentials, $storage, ['r_fullprofile', 'r_emailaddress', 'rw_nus']);
     }
 
     /**
@@ -74,5 +74,3 @@ class Service
         return $result;
     }
 }
-
-?>

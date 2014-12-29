@@ -32,7 +32,7 @@ class Service
     /**
      * @var array
      */
-    protected $fbScope = array();
+    protected $fbScope = [];
 
     /**
      * @param $config
@@ -114,7 +114,7 @@ class Service
      */
     protected function checkPermissions()
     {
-        $requiredPermissions = array('email', 'user_friends', 'publish_actions');
+        $requiredPermissions = ['email', 'user_friends', 'publish_actions'];
 
         if (is_array($this->fbScope)) {
             foreach ($requiredPermissions as $permission) {

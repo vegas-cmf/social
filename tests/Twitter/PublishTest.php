@@ -6,12 +6,12 @@ use Vegas\Social\Twitter\Publish;
 
 class PublishTest extends \PHPUnit_Framework_TestCase
 {
-    private $config = array(
+    private $config = [
         'consumer_key' => 'CPX9dOKA3Nga2VskRPcAWWIqr',
         'consumer_secret' => 'SWHIYIqpGfDnM03EFOBkkD26QT3xMIzwqOTwXFyAYZzP44ZFmK',
         'token' => '2831990905-dCAoGfdhYEX60GAG7xsOdIblMdfVerdfF9OoEz7',
         'secret' => '5WoQo1JtO8H61cOUvVPQbs6tTXZSTVB2ukGTou7yXkZOc',
-    );
+    ];
 
     //test profile: https://twitter.com/amstdtests
 
@@ -91,7 +91,7 @@ class PublishTest extends \PHPUnit_Framework_TestCase
 
         //wrong POST PARAMS - EXCEPTION TEST
         try {
-            $publishObject->setPostParams(array('fake' => 'fake'));
+            $publishObject->setPostParams(['fake' => 'fake']);
             throw new \Exception('Not this exception.');
         } catch (\Exception $ex) {
             $this->assertInstanceOf('\Vegas\Social\Exception\InvalidPostParamsException', $ex);

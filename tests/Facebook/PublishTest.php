@@ -6,11 +6,11 @@ use Vegas\Social\Facebook\Publish;
 
 class PublishTest extends \PHPUnit_Framework_TestCase
 {
-    private $config = array(
+    private $config = [
         'app_key' => '704865089606542',
         'app_secret' => '786207332b78fb7819d375d480c1c3cd',
-        'access_token' => 'CAAKBEjFH044BAIIz2eFnS2sVZA0prvVhUA99rPZC8nP32Xtw6T595YuoDXcjgszFSWPNXLzzvtD7sba6FqX373KoOxIbRZAZCP4ZBD8gBZB6jIRvVvLAsqApQLYMxugmQPYlRfxdWBZA3SIYzqBPflIOEvAhll7ybSfOJtK7c7SZCe9zZAui0DmSuLrtC5gjiUqsZD'
-    ); //the wall of this test profile: https://www.facebook.com/profile.php?id=100007822967538
+        'access_token' => 'CAAKBEjFH044BAJwkF58o3lG9NhO21DP9vp2eJXOUHu65n0y6lxNptKhm7jQ2BqLRqqjxA9W73gvzBzsXKwP6L7QaNcCX6EEiYZBrAJdBr9fYOc2rlZC4zhPNZBCedVxmxZCJ46Mg904VGZABRROF9aRI1ulYEf3wyPcfgyPmspdBoMWnloy5y52ftZAUyIhjqUQG3CJkI4lj1iN3s3aa6r'
+    ]; //the wall of this test profile: https://www.facebook.com/profile.php?id=100007822967538
 
     public function test()
     {
@@ -27,7 +27,8 @@ class PublishTest extends \PHPUnit_Framework_TestCase
         //PUBLISHING ON WALL
         $post_id = $facebook->setMessage("Testing, testing..." . rand())->setTitle("Testing, testing..." . rand())->setLink("http://amsterdamstandard.com/")->post();
         //test post ID
-        $this->assertEquals(true, gettype($post_id) == 'string');
+        $this->assertInternalType('string', $post_id);
+        $this->assertNotEmpty($post_id);
 
         //DELETING POST
         $this->assertEquals($post_id, $facebook->deletePost($post_id));
@@ -49,11 +50,11 @@ class PublishTest extends \PHPUnit_Framework_TestCase
 
         //GET POST PARAMS
         $post_params = $facebook->getPostParams();
-        $this->assertEquals('array', gettype($post_params));
+        $this->assertInternalType('array', $post_params);
 
         //SET POST PARAMS
         $facebook->setPostParams($post_params);
-        $this->assertEquals('array', gettype($post_params));
+        $this->assertInternalType('array', $post_params);
 
         //POST
         $post_id = $facebook->post();
@@ -101,7 +102,7 @@ class PublishTest extends \PHPUnit_Framework_TestCase
 
         //wrong POST PARAMS - EXCEPTION TEST
         try {
-            $facebook->setPostParams(array('fake' => 'fake'));
+            $facebook->setPostParams(['fake' => 'fake']);
             throw new \Exception('Not this exception.');
         } catch (\Exception $ex) {
             $this->assertInstanceOf('\Vegas\Social\Exception\InvalidPostParamsException', $ex);
