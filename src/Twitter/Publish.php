@@ -12,6 +12,7 @@
 
 namespace Vegas\Social\Twitter;
 
+use Vegas\Social\CurlFile;
 use Vegas\Social\PublishHelper;
 use Vegas\Social\PublishInterface;
 
@@ -21,6 +22,8 @@ use Vegas\Social\PublishInterface;
  */
 class Publish extends Service implements PublishInterface
 {
+    use PublishHelper;
+
     /**
      * @var array
      */
@@ -47,12 +50,12 @@ class Publish extends Service implements PublishInterface
      *
      * param example:
      *
-     * $config = array(
+     * $config = [
      *   'consumer_key' => 'CONSUMER KEY',
      *   'consumer_secret' => 'CONSUMER SECRET',
      *   'token' => 'TOKEN',
      *   'secret' => 'SECRET',
-     * );
+     * ];
      *
      */
     public function __construct($config)
@@ -81,7 +84,7 @@ class Publish extends Service implements PublishInterface
     }
 
     /**
-     * @param $string
+     * @param string $string
      * @return $this
      */
     public function setTitle($string)
@@ -105,13 +108,13 @@ class Publish extends Service implements PublishInterface
     }
 
     /**
-     * @param $url
+     * @param string $url
      * @return $this
      * @throws \Vegas\Social\Exception
      */
     public function setLink($url)
     {
-        if (!is_string($url) || !PublishHelper::validateLink($url)) {
+        if (!is_string($url) || !$this->validateLink($url)) {
             throw new \Vegas\Social\Exception\InvalidLinkException($url);
         }
 
@@ -140,20 +143,21 @@ class Publish extends Service implements PublishInterface
     }
 
     /**
-     * @param $photo
+     * @param CurlFile|string $photo
      * @return $this
      * @throws \Vegas\Social\Exception\InvalidArgumentException
      */
     public function setPhoto($photo)
     {
-        if (gettype($photo) == 'object' && get_class($photo) == 'CURLFile') {
-            $this->postParams['params']['media[]'] = $photo;
-        } else if (gettype($photo) == 'string' && PublishHelper::validateLink($photo)) {
+        if (is_string($photo) && $this->validateLink($photo)) {
             $this->tmpFile = './image_tmp' . time();
             file_put_contents($this->tmpFile, file_get_contents($photo));
-            $file_type = image_type_to_mime_type(exif_imagetype($this->tmpFile));
-            $curl_file = curl_file_create($this->tmpFile, $file_type, $this->postMessage);
-            $this->postParams['params']['media[]'] = $curl_file;
+            $fileType = image_type_to_mime_type(exif_imagetype($this->tmpFile));
+            $photo = new CurlFile($this->tmpFile, $fileType, $this->postMessage);
+        }
+
+        if (is_object($photo) && $photo instanceof CurlFile) {
+            $this->postParams['params']['media[]'] = $photo->getResource();
         } else {
             throw new \Vegas\Social\Exception\InvalidArgumentException('setPhoto');
         }
@@ -206,7 +210,7 @@ class Publish extends Service implements PublishInterface
     }
 
     /**
-     * @param $id
+     * @param string $id
      * @throws \Vegas\Social\Exception\UnexpectedResponseException
      */
     public function deletePost($id)
@@ -239,7 +243,7 @@ class Publish extends Service implements PublishInterface
     }
 
     /**
-     * @param $array
+     * @param array $array
      * @throws \Vegas\Social\Exception\InvalidPostParamsException
      */
     private function checkParams($array)

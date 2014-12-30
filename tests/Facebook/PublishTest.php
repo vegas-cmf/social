@@ -9,7 +9,7 @@ class PublishTest extends \PHPUnit_Framework_TestCase
     private $config = [
         'app_key' => '704865089606542',
         'app_secret' => '786207332b78fb7819d375d480c1c3cd',
-        'access_token' => 'CAAKBEjFH044BAJwkF58o3lG9NhO21DP9vp2eJXOUHu65n0y6lxNptKhm7jQ2BqLRqqjxA9W73gvzBzsXKwP6L7QaNcCX6EEiYZBrAJdBr9fYOc2rlZC4zhPNZBCedVxmxZCJ46Mg904VGZABRROF9aRI1ulYEf3wyPcfgyPmspdBoMWnloy5y52ftZAUyIhjqUQG3CJkI4lj1iN3s3aa6r'
+        'access_token' => 'CAAKBEjFH044BAGuXpxmr60BwT3hIj8SzK5mcClG7oskNu2G9Hxt8ElJMaZA71UTDW9uaN6LsQhFkqccp9AZBihT6QwHPD80162cJhtP1py6LfhZCmH0QGMAjHnZA3yEoq7roqQZBoIHpZCe8G8b5lPPDAs7o4lrWSfdMimvruZBlMRVwoTpGcdLp6ZChI0QSqdon5SsE1zE0zEOlLZBfAJfW9'
     ]; //the wall of this test profile: https://www.facebook.com/profile.php?id=100007822967538
 
     public function test()
@@ -18,27 +18,27 @@ class PublishTest extends \PHPUnit_Framework_TestCase
         $facebook = new Publish($this->config);
 
         //GETTING USER DATA
-        $graph_object = $facebook->getUserData();
-        $user_id = $graph_object->getId();
+        $graphObject = $facebook->getUserData();
+        $userId = $graphObject->getId();
 
         //VALIDATE USER
-        $this->assertEquals(true, $facebook->validateUser($user_id));
+        $this->assertEquals(true, $facebook->validateUser($userId));
 
         //PUBLISHING ON WALL
-        $post_id = $facebook->setMessage("Testing, testing..." . rand())->setTitle("Testing, testing..." . rand())->setLink("http://amsterdamstandard.com/")->post();
+        $postId = $facebook->setMessage("Testing, testing..." . rand())->setTitle("Testing, testing..." . rand())->setLink("http://amsterdamstandard.com/")->post();
         //test post ID
-        $this->assertInternalType('string', $post_id);
-        $this->assertNotEmpty($post_id);
+        $this->assertInternalType('string', $postId);
+        $this->assertNotEmpty($postId);
 
         //DELETING POST
-        $this->assertEquals($post_id, $facebook->deletePost($post_id));
+        $this->assertEquals($postId, $facebook->deletePost($postId));
 
         //ADDING CURL PICTURE WITH COMMENT TO PICTURES
-        $curl_file = curl_file_create(dirname(__DIR__) . '/test_picture.png', 'image/png', 'test_name');
-        $post_id = $facebook->setPhoto($curl_file)->post();
+        $curlFile = new \Vegas\Social\CurlFile(dirname(__DIR__) . '/test_picture.png', 'image/png', 'test_name');
+        $postId = $facebook->setPhoto($curlFile)->post();
 
         //DELETING PICTURE POST
-        $this->assertEquals($post_id, $facebook->deletePost($post_id));
+        $this->assertEquals($postId, $facebook->deletePost($postId));
 
         $facebook = new Publish($this->config);
 
@@ -49,18 +49,18 @@ class PublishTest extends \PHPUnit_Framework_TestCase
         $facebook->setMessage("Testing, testing..." . rand())->setTitle("Testing, testing..." . rand())->setLink("http://amsterdamstandard.com/");
 
         //GET POST PARAMS
-        $post_params = $facebook->getPostParams();
-        $this->assertInternalType('array', $post_params);
+        $postParams = $facebook->getPostParams();
+        $this->assertInternalType('array', $postParams);
 
         //SET POST PARAMS
-        $facebook->setPostParams($post_params);
-        $this->assertInternalType('array', $post_params);
+        $facebook->setPostParams($postParams);
+        $this->assertInternalType('array', $postParams);
 
         //POST
-        $post_id = $facebook->post();
+        $postId = $facebook->post();
 
         //DELETING PICTURE POST
-        $this->assertEquals($post_id, $facebook->deletePost($post_id));
+        $this->assertEquals($postId, $facebook->deletePost($postId));
     }
 
     public function testExceptions()

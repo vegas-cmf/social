@@ -21,21 +21,23 @@ use Vegas\Social\PublishInterface;
  */
 class Publish extends Service implements PublishInterface
 {
+    use PublishHelper;
+
     /**
      * @var array
      */
     private $postParams = [];
 
     /**
-     * @param $config
+     * @param array $config
      *
      * param example:
      *
-     * private $config = array(
+     * private $config = [
      *   'app_key' => 'APP KEY',
      *   'app_secret' => 'APP SECRET',
      *   'access_token' => 'USER TOKEN'
-     * );
+     * ];
      *
      */
     public function __construct($config)
@@ -50,8 +52,8 @@ class Publish extends Service implements PublishInterface
     public function post()
     {
         $this->checkParams($this->postParams);
-        $extra_headers = ['Content-type' => 'application/json'];
-        $result = json_decode($this->service->request('/people/~/shares?format=json', 'POST', json_encode($this->postParams), $extra_headers), true);
+        $extraHeaders = ['Content-type' => 'application/json'];
+        $result = json_decode($this->service->request('/people/~/shares?format=json', 'POST', json_encode($this->postParams), $extraHeaders), true);
         return $result;
     }
 
@@ -76,7 +78,7 @@ class Publish extends Service implements PublishInterface
     }
 
     /**
-     * @param $string
+     * @param string $string
      * @return $this
      */
     public function setTitle($string)
@@ -87,7 +89,7 @@ class Publish extends Service implements PublishInterface
     }
 
     /**
-     * @param $string
+     * @param string $string
      * @return $this
      */
     public function setMessage($string)
@@ -98,7 +100,7 @@ class Publish extends Service implements PublishInterface
     }
 
     /**
-     * @param $url
+     * @param string $url
      * @return $this
      * @throws \Vegas\Social\Exception\InvalidLinkException
      */
@@ -107,7 +109,7 @@ class Publish extends Service implements PublishInterface
         if (!is_string($url)) {
             throw new \Vegas\Social\Exception\InvalidLinkException('');
         }
-        if (!PublishHelper::validateLink($url)) {
+        if (!$this->validateLink($url)) {
             throw new \Vegas\Social\Exception\InvalidLinkException($url);
         }
 
@@ -117,7 +119,7 @@ class Publish extends Service implements PublishInterface
     }
 
     /**
-     * @param $url
+     * @param string $url
      * @return $this
      * @throws \Vegas\Social\Exception\InvalidArgumentException
      * @throws \Vegas\Social\Exception\InvalidLinkException
@@ -128,7 +130,7 @@ class Publish extends Service implements PublishInterface
             throw new \Vegas\Social\Exception\InvalidArgumentException('setPhoto');
         }
 
-        if (!PublishHelper::validateLink($url)) {
+        if (!$this->validateLink($url)) {
             throw new \Vegas\Social\Exception\InvalidLinkException($url);
         }
 

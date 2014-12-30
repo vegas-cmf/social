@@ -20,32 +20,32 @@ class PublishTest extends \PHPUnit_Framework_TestCase
         $twitter = new Publish($this->config);
 
         //verify credentials
-        $user_data = $twitter->verifyCredentials();
-        $this->assertEquals(2831990905, $user_data->id);
+        $userData = $twitter->verifyCredentials();
+        $this->assertEquals(2831990905, $userData->id);
 
         //set tweet text
         $twitter->setMessage("Test post! " . rand());
 
         //tweet default test post
-        $post_id = $twitter->post();
+        $postId = $twitter->post();
 
         //delete post
-        $this->assertEquals($post_id, $twitter->deletePost($post_id));
+        $this->assertEquals($postId, $twitter->deletePost($postId));
 
         //set photo post
-        $curl_file = curl_file_create(dirname(__DIR__) . '/test_picture.png', 'image/png', 'Test message ' . rand());
-        $twitter->setPhoto($curl_file)->setTitle("Photo test" . rand())->setMessage("...")->setLink("http://amsterdamstandard.com");
+        $curlFile = new \Vegas\Social\CurlFile(dirname(__DIR__) . '/test_picture.png', 'image/png', 'Test message ' . rand());
+        $twitter->setPhoto($curlFile)->setTitle("Photo test" . rand())->setMessage("...")->setLink("http://amsterdamstandard.com");
 
         //get and set params
-        $post_params = $twitter->getPostParams();
-        $post_params_after_set = $twitter->setPostParams($post_params)->getPostParams();
-        $this->assertEquals($post_params, $post_params_after_set);
+        $postParams = $twitter->getPostParams();
+        $postParamsAfterSet = $twitter->setPostParams($postParams)->getPostParams();
+        $this->assertEquals($postParams, $postParamsAfterSet);
 
         //post custom tweet
-        $post_id = $twitter->post();
+        $postId = $twitter->post();
 
         //delete photo post
-        $this->assertEquals($post_id, $twitter->deletePost($post_id));
+        $this->assertEquals($postId, $twitter->deletePost($postId));
     }
 
     public function test2()
@@ -54,10 +54,10 @@ class PublishTest extends \PHPUnit_Framework_TestCase
 
         //add photo post using photo url
         $twitter->setPhoto('http://www.toughzebra.com/wp-content/uploads/Amsterdam.Standard.Logo_.png', 'image/png')->setMessage("Photo url test" . rand());
-        $post_id = $twitter->post();
+        $postId = $twitter->post();
 
         //delete photo post
-        $this->assertEquals($post_id, $twitter->deletePost($post_id));
+        $this->assertEquals($postId, $twitter->deletePost($postId));
     }
 
     public function testExceptions()

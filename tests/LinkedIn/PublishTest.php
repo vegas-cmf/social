@@ -22,18 +22,18 @@ class PublishTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(is_string($user['firstName']));
 
 
-        $post_confirmation = $linkedIn->setTitle('Test title' . rand())->setMessage('Test picture' . rand())->setLink('https://github.com/vegas-cmf')->post();
-        $this->assertEquals(2, count($post_confirmation));
+        $postConfirmation = $linkedIn->setTitle('Test title' . rand())->setMessage('Test picture' . rand())->setLink('https://github.com/vegas-cmf')->post();
+        $this->assertEquals(2, count($postConfirmation));
         //var_dump($post_confirmation);
 
-        $post_params = $linkedIn->getPostParams();
-        $post_params['content']['title'] = "New test " . rand();
-        $post_params_after_set = $linkedIn->setPostParams($post_params)->getPostParams();
-        $this->assertEquals($post_params, $post_params_after_set);
+        $postParams = $linkedIn->getPostParams();
+        $postParams['content']['title'] = "New test " . rand();
+        $postParamsAfterSet = $linkedIn->setPostParams($postParams)->getPostParams();
+        $this->assertEquals($postParams, $postParamsAfterSet);
 
         $linkedIn->setPhoto('http://www.toughzebra.com/wp-content/uploads/Amsterdam.Standard.Logo_.png')->setTitle('Test title' . rand())->setMessage('Test picture' . rand())->setLink('https://github.com/vegas-cmf');
-        $post_confirmation = $linkedIn->post();
-        $this->assertEquals(2, count($post_confirmation));
+        $postConfirmation = $linkedIn->post();
+        $this->assertEquals(2, count($postConfirmation));
         //var_dump($post_confirmation);
     }
 

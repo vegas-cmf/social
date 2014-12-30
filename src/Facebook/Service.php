@@ -35,16 +35,16 @@ class Service
     protected $fbScope = [];
 
     /**
-     * @param $config
+     * @param array $config
      * @throws \Vegas\Social\Exception
      *
      * param example:
      *
-     * $config = array(
+     * $config = [
      *  'app_key' => 'APP ID',
      *  'app_secret' => 'APP SECRET',
      *  'access_token' => 'USER TOKEN'
-     * );
+     * ];
      *
      */
     public function __construct($config)
@@ -53,9 +53,9 @@ class Service
     }
 
     /**
-     * @param $accessToken
-     * @param $appId
-     * @param $appSecret
+     * @param string $accessToken
+     * @param string $appId
+     * @param string $appSecret
      * @throws \Vegas\Social\Exception
      */
     protected function connect($accessToken, $appId, $appSecret)
@@ -77,9 +77,9 @@ class Service
     }
 
     /**
-     * @param $method
-     * @param $area
-     * @param null $params
+     * @param string $method
+     * @param string $area
+     * @param array|null $params
      * @return bool|\Facebook\FacebookResponse
      * @throws \Vegas\Social\Exception
      */
@@ -135,16 +135,16 @@ class Service
     public function getUserData($userId = 'me')
     {
         try {
-            $user_profile = $this->request('GET', '/' . $userId)->getGraphObject(GraphUser::className());
+            $userProfile = $this->request('GET', '/' . $userId)->getGraphObject(GraphUser::className());
         } catch (FacebookRequestException $e) {
             throw new \Vegas\Social\Exception\UnexpectedResponseException($e);
         }
 
-        return $user_profile;
+        return $userProfile;
     }
 
     /**
-     * @param $userId
+     * @param string $userId
      * @return bool
      * @throws \Vegas\Social\Exception
      */

@@ -14,6 +14,7 @@ namespace Vegas\Social\Facebook;
 
 use Vegas\Social\PublishHelper;
 use Vegas\Social\PublishInterface;
+use Vegas\Social\CurlFile;
 
 /**
  * Class Publish
@@ -21,6 +22,8 @@ use Vegas\Social\PublishInterface;
  */
 class Publish extends Service implements PublishInterface
 {
+    use PublishHelper;
+
     /**
      * @var array
      */
@@ -37,16 +40,16 @@ class Publish extends Service implements PublishInterface
     private $targetUser;
 
     /**
-     * @param $config
+     * @param array $config
      * @throws \Vegas\Social\Exception
      *
      * param example:
      *
-     * $config = array(
+     * $config = [
      *  'app_key' => 'APP ID',
      *  'app_secret' => 'APP SECRET',
      *  'access_token' => 'USER TOKEN'
-     * );
+     * ];
      *
      */
     public function __construct($config)
@@ -81,7 +84,7 @@ class Publish extends Service implements PublishInterface
     }
 
     /**
-     * @param $string
+     * @param string $string
      * @return $this
      */
     public function setTitle($string)
@@ -91,7 +94,7 @@ class Publish extends Service implements PublishInterface
     }
 
     /**
-     * @param $string
+     * @param string $string
      * @return $this
      */
     public function setMessage($string)
@@ -101,12 +104,12 @@ class Publish extends Service implements PublishInterface
     }
 
     /**
-     * @param $string
+     * @param string $string
      * @throws \Vegas\Social\Exception\InvalidLinkException
      */
     public function setLink($string)
     {
-        if (PublishHelper::validateLink($string)) {
+        if ($this->validateLink($string)) {
             $this->postParams['link'] = $string;
             return $this;
         }
@@ -114,7 +117,7 @@ class Publish extends Service implements PublishInterface
     }
 
     /**
-     * @param $photo
+     * @param CurlFile|string $photo
      * @return $this
      * @throws \Vegas\Social\Exception
      */
@@ -126,9 +129,9 @@ class Publish extends Service implements PublishInterface
             'message' => $message
         ];
 
-        if (gettype($photo) == 'object' && get_class($photo) == 'CURLFile') {
-            $this->postParams['source'] = $photo;
-        } else if (gettype($photo) == 'string' && PublishHelper::validateLink($photo)) {
+        if (is_object($photo) && $photo instanceof CurlFile) {
+            $this->postParams['source'] = $photo->getResource();
+        } else if (is_string($photo) && $this->validateLink($photo)) {
             $this->postParams['url'] = $photo;
         } else {
             throw new \Vegas\Social\Exception\InvalidArgumentException('setPhoto');
@@ -146,7 +149,7 @@ class Publish extends Service implements PublishInterface
     }
 
     /**
-     * @param $array
+     * @param array $array
      * @return $this
      * @throws \Vegas\Social\Exception\InvalidLinkException
      * @throws \Vegas\Social\Exception\InvalidPostParamsException
@@ -154,7 +157,7 @@ class Publish extends Service implements PublishInterface
     public function setPostParams($array)
     {
         if (!isset($array['url'])) throw new \Vegas\Social\Exception\InvalidPostParamsException('url');
-        if (!PublishHelper::validateLink($array['url'])) throw new \Vegas\Social\Exception\InvalidLinkException($array['url']);
+        if (!$this->validateLink($array['url'])) throw new \Vegas\Social\Exception\InvalidLinkException($array['url']);
         if (!isset($array['message'])) throw new \Vegas\Social\Exception\InvalidPostParamsException('message');
 
         $this->postParams = $array;
@@ -162,26 +165,22 @@ class Publish extends Service implements PublishInterface
     }
 
     /**
-     * @return bool
+     * @return string
      * @throws \Vegas\Social\Exception
      */
     public function post()
     {
         $this->checkPostParams();
 
-        $postId = false;
-
         try {
-            $postId = $this->request('POST', '/' . $this->targetUser . '/' . $this->publishArea, $this->postParams)->getGraphObject()->getProperty('id');
+            return $this->request('POST', '/' . $this->targetUser . '/' . $this->publishArea, $this->postParams)->getGraphObject()->getProperty('id');
         } catch (FacebookRequestException $e) {
             throw new \Vegas\Social\Exception\UnexpectedResponseException($e);
         }
-
-        return $postId;
     }
 
     /**
-     * @param $postId
+     * @param string $postId
      * @return mixed
      * @throws \Vegas\Social\Exception
      */

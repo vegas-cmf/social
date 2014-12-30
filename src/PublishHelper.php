@@ -11,27 +11,24 @@
  */
 
 namespace Vegas\Social;
+use Phalcon\Validation\Validator\Url;
+use Phalcon\Validation;
 
 /**
- * Class PublishHelper
+ * Trait PublishHelper
  * @package Vegas\Social
  */
-class PublishHelper
+trait PublishHelper
 {
     /**
-     * @param $string
+     * @param string $string
      * @return bool
      */
-    public function validateLink($string)
+    protected function validateLink($string)
     {
-
-        $pattern = "/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i";
-        preg_match($pattern, $string, $matches);
-
-        if (count($matches) == 1 && $matches[0] == $string) {
-            return true;
-        }
-
-        return false;
+        return (new Validation)
+            ->add('link', new Url)
+            ->validate(['link' => $string])
+            ->count() === 0;
     }
 }

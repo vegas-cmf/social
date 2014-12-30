@@ -4,22 +4,16 @@ php:
   - 5.4
 
 services:
-  - curl
   - mongodb
   - memcached
 
 before_install:
   - mysql -e "CREATE DATABASE IF NOT EXISTS vegas_test;" -uroot
-  - sudo apt-add-repository -y ppa:phalcon/stable
-  - sudo apt-get update
-  - sudo apt-get install -y mlocate php5-phalcon php5-curl
-  - sudo updatedb
 
 before_script:
   - phpenv config-add travis/php.ini
-  - ln -s `locate -ebl 1 '\curl.so'` `php-config --extension-dir`/curl.so
-  - ln -s `locate -ebl 1 '\phalcon.so'` `php-config --extension-dir`/phalcon.so
-  - sudo -E service php5-fpm restart
+  - git clone -q --depth=1 https://github.com/phalcon/cphalcon.git -b master
+  - (cd cphalcon/ext; export CFLAGS="-g3 -O1 -fno-delete-null-pointer-checks -Wall"; phpize && ./configure --enable-phalcon && make -j4 && sudo make install && phpenv config-add ../unit-tests/ci/phalcon.ini)
   - curl -s http://getcomposer.org/installer | php
   - php composer.phar install --dev
 

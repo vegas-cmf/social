@@ -29,15 +29,15 @@ class Service
     protected $service;
 
     /**
-     * @param $config
+     * @param array $config
      *
      * param example:
      *
-     * private $config = array(
+     * private $config = [
      *   'app_key' => 'APP KEY',
      *   'app_secret' => 'APP SECRET',
      *   'access_token' => 'USER TOKEN'
-     * );
+     * ];
      *
      */
     public function __construct($config)
