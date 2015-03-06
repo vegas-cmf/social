@@ -19,9 +19,9 @@
         "php": ">=5.4",
         "ext-phalcon": ">=1.3.0,<2",
         "phalcon/devtools": "1.3.x-dev",
-        "phalcon/incubator": "dev-master",
-        "vegas-cmf/core": "1.*",
-        "vegas-cmf/oauth": "1.0.*",
+        "phalcon/incubator": "1.3.*",
+        "vegas-cmf/core": "1.1.*",
+        "vegas-cmf/oauth": "1.*",
         "facebook/php-sdk-v4": "4.0.*",
         "themattharris/tmhoauth": "*"
     },

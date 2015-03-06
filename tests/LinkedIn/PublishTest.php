@@ -9,7 +9,7 @@ class PublishTest extends \PHPUnit_Framework_TestCase
     private $config = [
         'app_key' => '77c863ytgelytp',
         'app_secret' => 'CHHUveJYMda6FzfH',
-        'access_token' => 'AQV3FqOmzEj84mQc5s-qUcoJaNZ0neY9SwyEWG1OrWlBR0nTxDeGbVEtfcPUSq9xkvplN7iijlZL9ZWGDlHKzm6CuvSigxtCgrstZLzyJr3kGOEtRWMOcp2kyNwFPXfJDp1hhVcdlvCx2QRWmvBEi-9rHpkvNr513i8w36sk4N9Eau5n6GQ'
+        'access_token' => 'AQXyPz0H7jhFw1iw6LM7SosVSaIFHtYy4w5mCzgKh0E1Yl7eJfyU5H0eEsalmAl5p5KLuxBuV9TGZ6lCcOuQQ6-RIstVcl0QuRKGurMOEgMMpUPhqJX46awuoLe-5eNmHWpo0NbrfGzojNc3TkrDoC6-Vt0d09l-Ujox9Ti05g-F-klwwnk'
     ];
 
 
