@@ -9,7 +9,7 @@ class PublishTest extends \PHPUnit_Framework_TestCase
     private $config = array(
         'app_key' => '704865089606542',
         'app_secret' => '786207332b78fb7819d375d480c1c3cd',
-        'access_token' => 'CAAKBEjFH044BAIIz2eFnS2sVZA0prvVhUA99rPZC8nP32Xtw6T595YuoDXcjgszFSWPNXLzzvtD7sba6FqX373KoOxIbRZAZCP4ZBD8gBZB6jIRvVvLAsqApQLYMxugmQPYlRfxdWBZA3SIYzqBPflIOEvAhll7ybSfOJtK7c7SZCe9zZAui0DmSuLrtC5gjiUqsZD'
+        'access_token' => 'CAAKBEjFH044BAAguBMog0rLxQrm1tx4xZBTqtUKIvLoQRl8OqkPmY78x30aPTG8GzAwVGbT4GqoBchmL6OZAEVeaEHK9FQsD0YS1FA5rwDykfzrs28pb8nOulmyZAdIZCLyarsA4WM5bbZBRdF9AQFb0jHdASUJeUDGpfsPuN2ZB3uJVaQqy6iHeZBZAbAluwArXEbozpsvt6ohkmNJ6WBxO'
     ); //the wall of this test profile: https://www.facebook.com/profile.php?id=100007822967538
 
     public function test()
